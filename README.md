@@ -1,12 +1,20 @@
 # HMS Wallet Demo
 ## Table of Contents
 
- * [Introduction](#introduction)
- * [Installation](#installation)
- * [Configuration ](#configuration )
- * [Supported Environments](#supported-environments)
- * [Sample Code](#sample-code)
- * [License](#license)
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Configuration ](#configuration )
+- [Supported Environments](#supported-environments)
+- [Sample Code](#sample-code)
+  - [Loyalty card](#loyalty-card)
+  - [Offer](#offer)
+  - [Gift card](#gift-card)
+  - [Boarding pass](#boarding-pass)
+  - [Transit pass](#transit-pass)
+  - [Event ticket](#event-ticket)
+  - [Generate JSON Web Encryption](#generate-json-web-encryption)
+  - [NFC Card](#nfc-card)
+- [License](#license)
 
 ## Introduction
 This is sample code for how to use the HMS wallet server interface. The HMS wallet server interface contains REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, Event Ticket).You can use these REST APIs to implement operations such as adding, querying or updating. 
@@ -35,7 +43,7 @@ Set this value depending on your account location. Get it from https://developer
 ## Sample Code
 Sample methods of using the HMS wallet server interface are listed below. You can follow these examples to operate the passes.
 
-### 1. Loyalty card:
+### Loyalty card:
 
 **1). Register a Loyalty Card Model.**
 
@@ -89,7 +97,7 @@ You can add messages to a loyalty card instance by calling the "addMessageToLoya
 
 You can link or unlink an offer instance to/from a loyalty card instance by calling the "updateLinkedOffersToLoyaltyInstance" method.
 
-### 2. Offer:
+### Offer:
 
 **1). Register an Offer Model.**
 
@@ -139,7 +147,7 @@ You can update part of an offer instance by calling the "partialUpdateOfferInsta
 
 You can add messages to an offer instance by calling the "addMessageToOfferInstance" method.
 
-### 3. Gift Card:
+### Gift Card:
 
 **1). Register a Gift Card Model.**
 
@@ -189,7 +197,7 @@ You can update part of a gift card instance by calling the "partialUpdateGiftCar
 
 You can add messages to a gift card instance by calling the "addMessageToGiftCardInstance" method.
 
-### 4. Boarding Pass:
+### Boarding Pass:
 
 **1). Register a Boarding Pass Model.**
 
@@ -239,7 +247,7 @@ You can update part of a boarding pass instance by calling the "partialUpdateFli
 
 You can add messages to a boarding pass instance by calling the "addMessageToFlightInstance" method.
 
-### 5. Transit Pass:
+### Transit Pass:
 
 **1). Register a Transit Pass Model.**
 
@@ -289,7 +297,7 @@ You can update part of a transit pass instance by calling the "partialUpdateTran
 
 You can add messages to a transit pass instance by calling the "addMessageToTransitInstance" method.
 
-### 6. Event Ticket:
+### Event Ticket:
 
 **1). Register an Event Ticket Model.**
 
@@ -339,11 +347,11 @@ You can update part of an event ticket instance by calling the "partialUpdateEve
 
 You can add messages to an event ticket instance by calling the "addMessageToEventTicketInstance" method.
 
-### 7. Generate JSON Web Encryption (JWE):
+### Generate JSON Web Encryption:
 
 You can call the "generateThinJWEToBindUser" or "generateJWEToAddPassAndBindUser" methods to generate JWEs. These JWEs are used to bind wallet pass instances to users.
 
-### 8. NFC Card
+### NFC Card
 
 You can post NFC information by calling the "postNfcCardPersonalizedData" method.
 ## License
