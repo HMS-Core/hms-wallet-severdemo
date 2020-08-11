@@ -354,5 +354,14 @@ You can call the "generateThinJWEToBindUser" or "generateJWEToAddPassAndBindUser
 ### NFC Card
 
 You can post NFC information by calling the "postNfcCardPersonalizedData" method.
+
+## Question or issues
+If you have questions about how to use HMS samples, try the following options:
+- [Stack Overflow](https://stackoverflow.com/questions/tagged/huawei-mobile-services) is the best place for any programming questions. Be sure to tag your question with 
+**huawei-mobile-services**.
+- [Huawei Developer Forum](https://forums.developer.huawei.com/forumPortal/en/home?fid=0101187876626530001) HMS Core Module is great for general questions, or seeking recommendations and opinions.
+
+If you run into a bug in our samples, please submit an [issue](https://github.com/HMS-Core/hms-scan-demo/issues) to the Repository. Even better you can submit a [Pull Request](https://github.com/HMS-Core/hms-wallet-severdemo/pulls) with a fix.
+
 ## License
 HMS wallet server sample code is licensed under the [Apache License, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
