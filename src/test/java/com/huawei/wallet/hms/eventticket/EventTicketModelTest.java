@@ -16,15 +16,15 @@
 
 package com.huawei.wallet.hms.eventticket;
 
-import com.huawei.wallet.hms.ServerApiService;
-import com.huawei.wallet.hms.ServerApiServiceImpl;
-import com.huawei.wallet.util.ConfigUtil;
-import com.huawei.wallet.util.HwWalletObjectUtil;
-
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
+import com.huawei.wallet.hms.hmssdk.WalletBuildService;
+import com.huawei.wallet.hms.hmssdk.dto.HwWalletObject;
+import com.huawei.wallet.hms.hmssdk.impl.WalletBuildServiceImpl;
+import com.huawei.wallet.util.CommonUtil;
+import com.huawei.wallet.util.HwWalletObjectUtil;
 import org.junit.Test;
+
+import java.util.List;
 
 /**
  * Event ticket model tests.
@@ -32,27 +32,33 @@ import org.junit.Test;
  * @since 2019-12-12
  */
 public class EventTicketModelTest {
-    private final ServerApiService serverApiService = new ServerApiServiceImpl();
+    private WalletBuildService walletBuildService = new WalletBuildServiceImpl();
 
     /**
      * Create a new event ticket model.
-     * Each event ticket model indicates a style of event ticket passes.
+     * Each event ticket model indicates a style of event ticket passes..
      * POST http://XXX/hmspass/v1/eventticket/model
      */
     @Test
     public void createEventTicketModel() {
-        System.out.println("createEventTicketModel begin.");
+        System.out.println("createEventTicketModel begin");
 
         // Read an event ticket model from a JSON file.
-        JSONObject model = JSONObject.parseObject(ConfigUtil.readFile("EventTicketModel.json"));
+        HwWalletObject model =
+            JSONObject.parseObject(CommonUtil.readJSONFile("EventTicketModel.json"), HwWalletObject.class);
 
         // Validate parameters.
-        HwWalletObjectUtil.validateModel(model);
+        boolean isValidModel = HwWalletObjectUtil.validateModel(model);
+        if (!isValidModel) {
+            System.out.println("Invalid model parameters.");
+            return;
+        }
 
         // Post the new event ticket model to HMS wallet server.
         String urlSegment = "eventticket/model";
-        JSONObject responseModel = serverApiService.postToWalletServer(urlSegment, JSONObject.toJSONString(model));
-        System.out.println("Posted event ticket model: " + JSONObject.toJSONString(responseModel));
+        HwWalletObject responseModel =
+            walletBuildService.postHwWalletObjectToWalletServer(urlSegment, CommonUtil.toJson(model));
+        System.out.println("Posted event ticket model: " + CommonUtil.toJson(responseModel));
     }
 
     /**
@@ -69,8 +75,8 @@ public class EventTicketModelTest {
 
         // Get the event ticket model.
         String urlSegment = "eventticket/model/";
-        JSONObject responseModel = serverApiService.getHwWalletObjectById(urlSegment, modelId);
-        System.out.println("Corresponding event ticket model: " + JSONObject.toJSONString(responseModel));
+        HwWalletObject responseModel = walletBuildService.getHwWalletObjectById(urlSegment, modelId);
+        System.out.println("Corresponding event ticket model: " + CommonUtil.toJson(responseModel));
     }
 
     /**
@@ -84,10 +90,8 @@ public class EventTicketModelTest {
 
         // Get a list of event ticket models.
         String urlSegment = "eventticket/model";
-
-        JSONArray models = serverApiService.getModels(urlSegment, 5);
-        System.out.println("Total models count: " + models.size());
-        System.out.println("Models list: " + models.toJSONString());
+        List<HwWalletObject> responseModels = walletBuildService.getModels(urlSegment, 5);
+        System.out.println("Event ticket models list: " + CommonUtil.toJson(responseModels));
     }
 
     /**
@@ -100,16 +104,21 @@ public class EventTicketModelTest {
         System.out.println("fullUpdateEventTicketModel begin.");
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will overwrite the corresponding model.
-        JSONObject model = JSONObject.parseObject(ConfigUtil.readFile("FullUpdateEventTicketModel.json"));
+        HwWalletObject model =
+            JSONObject.parseObject(CommonUtil.readJSONFile("FullUpdateEventTicketModel.json"), HwWalletObject.class);
 
         // Validate parameters.
-        HwWalletObjectUtil.validateModel(model);
+        boolean isValidModel = HwWalletObjectUtil.validateModel(model);
+        if (!isValidModel) {
+            System.out.println("Invalid model parameters.");
+            return;
+        }
 
         // Update the event ticket model.
         String urlSegment = "eventticket/model/";
-        JSONObject responseModel = serverApiService.fullUpdateHwWalletObject(urlSegment,
-            model.getString("passStyleIdentifier"), JSONObject.toJSONString(model));
-        System.out.println("Updated event ticket model: " + JSONObject.toJSONString(responseModel));
+        HwWalletObject responseModel = walletBuildService.fullUpdateHwWalletObject(urlSegment,
+            model.getPassStyleIdentifier(), CommonUtil.toJson(model));
+        System.out.println("Updated event ticket model: " + CommonUtil.toJson(responseModel));
     }
 
     /**
@@ -125,12 +134,14 @@ public class EventTicketModelTest {
         String modelId = "eventTicketModelTest";
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will merge with the corresponding model.
-        String modelStr = ConfigUtil.readFile("PartialUpdateEventTicketModel.json");
+        HwWalletObject model =
+            JSONObject.parseObject(CommonUtil.readJSONFile("PartialUpdateEventTicketModel.json"), HwWalletObject.class);
 
         // Update the event ticket model.
         String urlSegment = "eventticket/model/";
-        JSONObject responseModel = serverApiService.partialUpdateHwWalletObject(urlSegment, modelId, modelStr);
-        System.out.println("Updated event ticket model: " + JSONObject.toJSONString(responseModel));
+        HwWalletObject responseModel =
+            walletBuildService.partialUpdateHwWalletObject(urlSegment, modelId, CommonUtil.toJson(model));
+        System.out.println("Updated event ticket model: " + CommonUtil.toJson(responseModel));
     }
 
     /**
@@ -152,11 +163,11 @@ public class EventTicketModelTest {
         // messages at a time.
 
         // Read messages from a JSON file.
-        String messagesStr = ConfigUtil.readFile("Messages.json");
+        String messages = CommonUtil.readJSONFile("Messages.json");
 
         // Add messages to the event ticket model.
-        String urlSegment = "eventticket/model/";
-        JSONObject responseModel = serverApiService.addMessageToHwWalletObject(urlSegment, modelId, messagesStr);
-        System.out.println("Updated event ticket model: " + JSONObject.toJSONString(responseModel));
+        String urlSegment = "eventticket/model/addMessage";
+        HwWalletObject responseModel = walletBuildService.addMessageToHwWalletObject(urlSegment, modelId, messages);
+        System.out.println("Updated event ticket model: " + CommonUtil.toJson(responseModel));
     }
 }

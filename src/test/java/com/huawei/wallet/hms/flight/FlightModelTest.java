@@ -16,15 +16,15 @@
 
 package com.huawei.wallet.hms.flight;
 
-import com.huawei.wallet.hms.ServerApiService;
-import com.huawei.wallet.hms.ServerApiServiceImpl;
-import com.huawei.wallet.util.ConfigUtil;
-import com.huawei.wallet.util.HwWalletObjectUtil;
-
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
+import com.huawei.wallet.hms.hmssdk.WalletBuildService;
+import com.huawei.wallet.hms.hmssdk.dto.HwWalletObject;
+import com.huawei.wallet.hms.hmssdk.impl.WalletBuildServiceImpl;
+import com.huawei.wallet.util.CommonUtil;
+import com.huawei.wallet.util.HwWalletObjectUtil;
 import org.junit.Test;
+
+import java.util.List;
 
 /**
  * Flight model tests.
@@ -32,7 +32,7 @@ import org.junit.Test;
  * @since 2019-12-12
  */
 public class FlightModelTest {
-    private final ServerApiService serverApiService = new ServerApiServiceImpl();
+    private WalletBuildService walletBuildService = new WalletBuildServiceImpl();
 
     /**
      * Create a new flight model.
@@ -41,18 +41,24 @@ public class FlightModelTest {
      */
     @Test
     public void createFlightModel() {
-        System.out.println("createFlightModel begin.");
+        System.out.println("createFlightModel begin");
 
         // Read a flight model from a JSON file.
-        JSONObject model = JSONObject.parseObject(ConfigUtil.readFile("FlightModel.json"));
+        HwWalletObject model =
+            JSONObject.parseObject(CommonUtil.readJSONFile("FlightModel.json"), HwWalletObject.class);
 
         // Validate parameters.
-        HwWalletObjectUtil.validateModel(model);
+        boolean isValidModel = HwWalletObjectUtil.validateModel(model);
+        if (!isValidModel) {
+            System.out.println("Invalid model parameters.");
+            return;
+        }
 
         // Post the new flight model to HMS wallet server.
         String urlSegment = "flight/model";
-        JSONObject responseModel = serverApiService.postToWalletServer(urlSegment, JSONObject.toJSONString(model));
-        System.out.println("Posted flight model: " + JSONObject.toJSONString(responseModel));
+        HwWalletObject responseModel =
+            walletBuildService.postHwWalletObjectToWalletServer(urlSegment, CommonUtil.toJson(model));
+        System.out.println("Posted flight model: " + CommonUtil.toJson(responseModel));
     }
 
     /**
@@ -69,8 +75,8 @@ public class FlightModelTest {
 
         // Get the flight model.
         String urlSegment = "flight/model/";
-        JSONObject responseModel = serverApiService.getHwWalletObjectById(urlSegment, modelId);
-        System.out.println("Corresponding flight model: " + JSONObject.toJSONString(responseModel));
+        HwWalletObject responseModel = walletBuildService.getHwWalletObjectById(urlSegment, modelId);
+        System.out.println("Corresponding flight model: " + CommonUtil.toJson(responseModel));
     }
 
     /**
@@ -84,9 +90,8 @@ public class FlightModelTest {
 
         // Get a list of flight models.
         String urlSegment = "flight/model";
-        JSONArray models = serverApiService.getModels(urlSegment, 5);
-        System.out.println("Total models count: " + models.size());
-        System.out.println("Models list: " + models.toJSONString());
+        List<HwWalletObject> responseModels = walletBuildService.getModels(urlSegment, 5);
+        System.out.println("Flight models list: " + CommonUtil.toJson(responseModels));
     }
 
     /**
@@ -99,16 +104,21 @@ public class FlightModelTest {
         System.out.println("fullUpdateFlightModel begin.");
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will overwrite the corresponding model.
-        JSONObject model = JSONObject.parseObject(ConfigUtil.readFile("FullUpdateFlightModel.json"));
+        HwWalletObject model =
+            JSONObject.parseObject(CommonUtil.readJSONFile("FullUpdateFlightModel.json"), HwWalletObject.class);
 
         // Validate parameters.
-        HwWalletObjectUtil.validateModel(model);
+        boolean isValidModel = HwWalletObjectUtil.validateModel(model);
+        if (!isValidModel) {
+            System.out.println("Invalid model parameters.");
+            return;
+        }
 
         // Update the flight model.
         String urlSegment = "flight/model/";
-        JSONObject responseModel = serverApiService.fullUpdateHwWalletObject(urlSegment,
-            model.getString("passStyleIdentifier"), JSONObject.toJSONString(model));
-        System.out.println("Updated flight model: " + JSONObject.toJSONString(responseModel));
+        HwWalletObject responseModel = walletBuildService.fullUpdateHwWalletObject(urlSegment,
+            model.getPassStyleIdentifier(), CommonUtil.toJson(model));
+        System.out.println("Updated flight model: " + CommonUtil.toJson(responseModel));
     }
 
     /**
@@ -124,12 +134,14 @@ public class FlightModelTest {
         String modelId = "flightModelTest";
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will merge with the corresponding model.
-        String modelStr = ConfigUtil.readFile("PartialUpdateFlightModel.json");
+        HwWalletObject model =
+            JSONObject.parseObject(CommonUtil.readJSONFile("PartialUpdateFlightModel.json"), HwWalletObject.class);
 
         // Update the flight model.
         String urlSegment = "flight/model/";
-        JSONObject responseModel = serverApiService.partialUpdateHwWalletObject(urlSegment, modelId, modelStr);
-        System.out.println("Updated flight model: " + JSONObject.toJSONString(responseModel));
+        HwWalletObject responseModel =
+            walletBuildService.partialUpdateHwWalletObject(urlSegment, modelId, CommonUtil.toJson(model));
+        System.out.println("Updated flight model: " + CommonUtil.toJson(responseModel));
     }
 
     /**
@@ -151,11 +163,11 @@ public class FlightModelTest {
         // messages at a time.
 
         // Read messages from a JSON file.
-        String messagesStr = ConfigUtil.readFile("Messages.json");
+        String messages = CommonUtil.readJSONFile("Messages.json");
 
         // Add messages to the flight model.
-        String urlSegment = "flight/model/";
-        JSONObject responseModel = serverApiService.addMessageToHwWalletObject(urlSegment, modelId, messagesStr);
-        System.out.println("Updated flight model: " + JSONObject.toJSONString(responseModel));
+        String urlSegment = "flight/model/addMessage";
+        HwWalletObject responseModel = walletBuildService.addMessageToHwWalletObject(urlSegment, modelId, messages);
+        System.out.println("Updated flight model: " + CommonUtil.toJson(responseModel));
     }
 }

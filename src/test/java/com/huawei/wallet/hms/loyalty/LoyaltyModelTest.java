@@ -16,15 +16,15 @@
 
 package com.huawei.wallet.hms.loyalty;
 
-import com.huawei.wallet.hms.ServerApiService;
-import com.huawei.wallet.hms.ServerApiServiceImpl;
-import com.huawei.wallet.util.ConfigUtil;
-import com.huawei.wallet.util.HwWalletObjectUtil;
-
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
+import com.huawei.wallet.hms.hmssdk.WalletBuildService;
+import com.huawei.wallet.hms.hmssdk.dto.HwWalletObject;
+import com.huawei.wallet.hms.hmssdk.impl.WalletBuildServiceImpl;
+import com.huawei.wallet.util.CommonUtil;
+import com.huawei.wallet.util.HwWalletObjectUtil;
 import org.junit.Test;
+
+import java.util.List;
 
 /**
  * Loyalty model tests.
@@ -32,7 +32,7 @@ import org.junit.Test;
  * @since 2019-12-12
  */
 public class LoyaltyModelTest {
-    private final ServerApiService serverApiService = new ServerApiServiceImpl();
+    private WalletBuildService walletBuildService = new WalletBuildServiceImpl();
 
     /**
      * Create a new loyalty model.
@@ -41,18 +41,24 @@ public class LoyaltyModelTest {
      */
     @Test
     public void createLoyaltyModel() {
-        System.out.println("createLoyaltyModel begin.");
+        System.out.println("createLoyaltyModel begin");
 
         // Read a loyalty model from a JSON file.
-        JSONObject model = JSONObject.parseObject(ConfigUtil.readFile("LoyaltyModel.json"));
+        HwWalletObject model =
+            JSONObject.parseObject(CommonUtil.readJSONFile("LoyaltyModel.json"), HwWalletObject.class);
 
         // Validate parameters.
-        HwWalletObjectUtil.validateModel(model);
+        boolean isValidModel = HwWalletObjectUtil.validateModel(model);
+        if (!isValidModel) {
+            System.out.println("Invalid model parameters.");
+            return;
+        }
 
         // Post the new loyalty model to HMS wallet server.
         String urlSegment = "loyalty/model";
-        JSONObject responseModel = serverApiService.postToWalletServer(urlSegment, JSONObject.toJSONString(model));
-        System.out.println("Posted loyalty model: " + JSONObject.toJSONString(responseModel));
+        HwWalletObject responseModel =
+            walletBuildService.postHwWalletObjectToWalletServer(urlSegment, CommonUtil.toJson(model));
+        System.out.println("Posted loyalty model: " + CommonUtil.toJson(responseModel));
     }
 
     /**
@@ -69,8 +75,8 @@ public class LoyaltyModelTest {
 
         // Get the loyalty model.
         String urlSegment = "loyalty/model/";
-        JSONObject responseModel = serverApiService.getHwWalletObjectById(urlSegment, modelId);
-        System.out.println("Corresponding loyalty model: " + JSONObject.toJSONString(responseModel));
+        HwWalletObject responseModel = walletBuildService.getHwWalletObjectById(urlSegment, modelId);
+        System.out.println("Corresponding loyalty model: " + CommonUtil.toJson(responseModel));
     }
 
     /**
@@ -84,10 +90,8 @@ public class LoyaltyModelTest {
 
         // Get a list of loyalty models.
         String urlSegment = "loyalty/model";
-
-        JSONArray models = serverApiService.getModels(urlSegment, 5);
-        System.out.println("Total models count: " + models.size());
-        System.out.println("Models list: " + models.toJSONString());
+        List<HwWalletObject> responseModels = walletBuildService.getModels(urlSegment, 5);
+        System.out.println("Loyalty models list: " + CommonUtil.toJson(responseModels));
     }
 
     /**
@@ -100,16 +104,21 @@ public class LoyaltyModelTest {
         System.out.println("fullUpdateLoyaltyModel begin.");
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will overwrite the corresponding model.
-        JSONObject model = JSONObject.parseObject(ConfigUtil.readFile("FullUpdateLoyaltyModel.json"));
+        HwWalletObject model =
+            JSONObject.parseObject(CommonUtil.readJSONFile("FullUpdateLoyaltyModel.json"), HwWalletObject.class);
 
         // Validate parameters.
-        HwWalletObjectUtil.validateModel(model);
+        boolean isValidModel = HwWalletObjectUtil.validateModel(model);
+        if (!isValidModel) {
+            System.out.println("Invalid model parameters.");
+            return;
+        }
 
         // Update the loyalty model.
         String urlSegment = "loyalty/model/";
-        JSONObject responseModel = serverApiService.fullUpdateHwWalletObject(urlSegment,
-            model.getString("passStyleIdentifier"), JSONObject.toJSONString(model));
-        System.out.println("Updated loyalty model: " + JSONObject.toJSONString(responseModel));
+        HwWalletObject responseModel = walletBuildService.fullUpdateHwWalletObject(urlSegment,
+            model.getPassStyleIdentifier(), CommonUtil.toJson(model));
+        System.out.println("Updated loyalty model: " + CommonUtil.toJson(responseModel));
     }
 
     /**
@@ -125,12 +134,14 @@ public class LoyaltyModelTest {
         String modelId = "loyaltyModelTest";
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will merge with the corresponding model.
-        String modelStr = ConfigUtil.readFile("PartialUpdateLoyaltyModel.json");
+        HwWalletObject model =
+            JSONObject.parseObject(CommonUtil.readJSONFile("PartialUpdateLoyaltyModel.json"), HwWalletObject.class);
 
         // Update the loyalty model.
         String urlSegment = "loyalty/model/";
-        JSONObject responseModel = serverApiService.partialUpdateHwWalletObject(urlSegment, modelId, modelStr);
-        System.out.println("Updated loyalty model: " + JSONObject.toJSONString(responseModel));
+        HwWalletObject responseModel =
+            walletBuildService.partialUpdateHwWalletObject(urlSegment, modelId, CommonUtil.toJson(model));
+        System.out.println("Updated loyalty model: " + CommonUtil.toJson(responseModel));
     }
 
     /**
@@ -152,11 +163,11 @@ public class LoyaltyModelTest {
         // messages at a time.
 
         // Read messages from a JSON file.
-        String messagesStr = ConfigUtil.readFile("Messages.json");
+        String messages = CommonUtil.readJSONFile("Messages.json");
 
         // Add messages to the loyalty model.
-        String urlSegment = "loyalty/model/";
-        JSONObject responseModel = serverApiService.addMessageToHwWalletObject(urlSegment, modelId, messagesStr);
-        System.out.println("Updated loyalty model: " + JSONObject.toJSONString(responseModel));
+        String urlSegment = "loyalty/model/addMessage";
+        HwWalletObject responseModel = walletBuildService.addMessageToHwWalletObject(urlSegment, modelId, messages);
+        System.out.println("Updated loyalty model: " + CommonUtil.toJson(responseModel));
     }
 }

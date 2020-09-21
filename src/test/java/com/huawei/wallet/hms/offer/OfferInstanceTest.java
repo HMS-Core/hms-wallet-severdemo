@@ -16,15 +16,17 @@
 
 package com.huawei.wallet.hms.offer;
 
-import com.huawei.wallet.hms.ServerApiService;
-import com.huawei.wallet.hms.ServerApiServiceImpl;
-import com.huawei.wallet.util.ConfigUtil;
-import com.huawei.wallet.util.HwWalletObjectUtil;
-
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
+import com.huawei.wallet.hms.hmssdk.WalletBuildService;
+import com.huawei.wallet.hms.hmssdk.dto.HwWalletObject;
+import com.huawei.wallet.hms.hmssdk.impl.WalletBuildServiceImpl;
+import com.huawei.wallet.util.CommonUtil;
+import com.huawei.wallet.util.HwWalletObjectUtil;
+import com.huawei.wallet.util.JweUtil;
 import org.junit.Test;
+
+import java.net.URLEncoder;
+import java.util.List;
 
 /**
  * Offer instance tests.
@@ -32,30 +34,35 @@ import org.junit.Test;
  * @since 2019-12-12
  */
 public class OfferInstanceTest {
-    private final ServerApiService serverApiService = new ServerApiServiceImpl();
+    private WalletBuildService walletBuildService = new WalletBuildServiceImpl();
 
     /**
      * Add an offer instance to HMS wallet server.
      * Run the "createOfferModel" test before running this test.
-     * After using this API, you will use a thin JWE to bind this instance to a user. Or you can add an instance by
-     * sending a JWE with complete instance information, without using this API. See JWE example tests.
+     * After using this API, you will use a thin JWE to bind this instance to a user. You can also add an instance by
+     * sending a JWE with all instance information, without using this API. See JWE example methods at the bottom.
      * POST http://XXX/hmspass/v1/offer/instance
      */
     @Test
     public void addOfferInstance() {
-        System.out.println("addOfferInstance begin.");
+        System.out.println("addOfferInstance begin");
 
         // Read an offer instance from a JSON file.
-        JSONObject instance = JSONObject.parseObject(ConfigUtil.readFile("OfferInstance.json"));
+        HwWalletObject instance =
+            JSONObject.parseObject(CommonUtil.readJSONFile("OfferInstance.json"), HwWalletObject.class);
 
         // Validate parameters.
-        HwWalletObjectUtil.validateInstance(instance);
+        boolean isValidInstance = HwWalletObjectUtil.validateInstance(instance);
+        if (!isValidInstance) {
+            System.out.println("Invalid instance parameters.");
+            return;
+        }
 
         // Post the new offer instance to HMS wallet server.
         String urlSegment = "offer/instance";
-        JSONObject responseInstance =
-            serverApiService.postToWalletServer(urlSegment, JSONObject.toJSONString(instance));
-        System.out.println("Posted offer instance: " + JSONObject.toJSONString(responseInstance));
+        HwWalletObject responseInstance =
+            walletBuildService.postHwWalletObjectToWalletServer(urlSegment, CommonUtil.toJson(instance));
+        System.out.println("Posted offer instance: " + CommonUtil.toJson(responseInstance));
     }
 
     /**
@@ -72,8 +79,8 @@ public class OfferInstanceTest {
 
         // Get the offer instance.
         String urlSegment = "offer/instance/";
-        JSONObject responseInstance = serverApiService.getHwWalletObjectById(urlSegment, instanceId);
-        System.out.println("Corresponding offer instance: " + JSONObject.toJSONString(responseInstance));
+        HwWalletObject responseInstance = walletBuildService.getHwWalletObjectById(urlSegment, instanceId);
+        System.out.println("Corresponding offer instance: " + CommonUtil.toJson(responseInstance));
     }
 
     /**
@@ -90,10 +97,8 @@ public class OfferInstanceTest {
 
         // Get a list of offer instances.
         String urlSegment = "offer/instance";
-
-        JSONArray instances = serverApiService.getInstances(urlSegment, modelId, 5);
-        System.out.println("Total instances count: " + instances.size());
-        System.out.println("Instances list: " + instances.toJSONString());
+        List<HwWalletObject> responseInstances = walletBuildService.getInstances(urlSegment, modelId, 5);
+        System.out.println("Offer instances list: " + CommonUtil.toJson(responseInstances));
     }
 
     /**
@@ -106,16 +111,21 @@ public class OfferInstanceTest {
         System.out.println("fullUpdateOfferInstance begin.");
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will overwrite the corresponding instance.
-        JSONObject instance = JSONObject.parseObject(ConfigUtil.readFile("FullUpdateOfferInstance.json"));
+        HwWalletObject instance =
+            JSONObject.parseObject(CommonUtil.readJSONFile("FullUpdateOfferInstance.json"), HwWalletObject.class);
 
         // Validate parameters.
-        HwWalletObjectUtil.validateInstance(instance);
+        boolean isValidInstance = HwWalletObjectUtil.validateInstance(instance);
+        if (!isValidInstance) {
+            System.out.println("Invalid instance parameters.");
+            return;
+        }
 
         // Update the offer instance.
         String urlSegment = "offer/instance/";
-        JSONObject responseInstance = serverApiService.fullUpdateHwWalletObject(urlSegment,
-            instance.getString("serialNumber"), JSONObject.toJSONString(instance));
-        System.out.println("Updated offer instance: " + JSONObject.toJSONString(responseInstance));
+        HwWalletObject responseInstance = walletBuildService.fullUpdateHwWalletObject(urlSegment,
+            instance.getSerialNumber(), CommonUtil.toJson(instance));
+        System.out.println("Updated offer instance: " + CommonUtil.toJson(responseInstance));
     }
 
     /**
@@ -131,12 +141,14 @@ public class OfferInstanceTest {
         String instanceId = "50001";
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will merge with the corresponding instance.
-        String instanceStr = ConfigUtil.readFile("PartialUpdateOfferInstance.json");
+        HwWalletObject instance =
+            JSONObject.parseObject(CommonUtil.readJSONFile("PartialUpdateOfferInstance.json"), HwWalletObject.class);
 
         // Update the offer instance.
         String urlSegment = "offer/instance/";
-        JSONObject responseInstance = serverApiService.partialUpdateHwWalletObject(urlSegment, instanceId, instanceStr);
-        System.out.println("Updated offer instance: " + JSONObject.toJSONString(responseInstance));
+        HwWalletObject responseInstance =
+            walletBuildService.partialUpdateHwWalletObject(urlSegment, instanceId, CommonUtil.toJson(instance));
+        System.out.println("Updated offer instance: " + CommonUtil.toJson(responseInstance));
     }
 
     /**
@@ -158,11 +170,76 @@ public class OfferInstanceTest {
         // 10 messages at a time.
 
         // Read messages from a JSON file.
-        String messagesStr = ConfigUtil.readFile("Messages.json");
+        String messages = CommonUtil.readJSONFile("Messages.json");
 
         // Add messages to the offer instance.
-        String urlSegment = "offer/instance/";
-        JSONObject responseInstance = serverApiService.addMessageToHwWalletObject(urlSegment, instanceId, messagesStr);
-        System.out.println("Updated offer instance: " + JSONObject.toJSONString(responseInstance));
+        String urlSegment = "offer/instance/addMessage";
+        HwWalletObject responseInstance =
+            walletBuildService.addMessageToHwWalletObject(urlSegment, instanceId, messages);
+        System.out.println("Updated offer instance: " + CommonUtil.toJson(responseInstance));
+    }
+
+    /**
+     * Generate a thin JWE. This JWEs contains only instanceId information. It's used to bind an existing instance
+     * to a user. You should generate a thin JWE with an instanceId that has already been added to HMS wallet server.
+     */
+    @Test
+    public void generateThinJWEToBindUser() {
+        System.out.println("generateThinJWEToBindUser begin.\n");
+
+        // This is the app ID registered on Huawei AGC website.
+        String appId = "Replace with your app ID";
+        // Bind existing offer instances to users. Construct a list of offer instance IDs to be bound.
+        String instanceIdListJson = "{\"instanceIds\": [\"50001\"]}";
+        JSONObject instanceIdListJsonObject = JSONObject.parseObject(instanceIdListJson);
+        instanceIdListJsonObject.put("iss", appId);
+        String payload = instanceIdListJsonObject.toJSONString();
+
+        // You generated a pair of RSA keys while applying for services on AGC. Use that private key here.
+        String jweSignPrivateKey = "Replace with your private key.";
+
+        // Generate a thin JWE.
+        String jwe = JweUtil.generateJwe(jweSignPrivateKey, payload);
+        System.out.println("JWE String: " + jwe + "\n");
+
+        // Replace {walletkit_website_url} with one of the following strings according to your account location.
+        // walletpass-drcn.cloud.huawei.com for China
+        // walletpass-drru.cloud.huawei.com for Russia
+        // walletpass-dra.cloud.huawei.com for Asia, Africa, and Latin America
+        // walletpass-dre.cloud.huawei.com for Europe
+        System.out.println("JWE link for browser: "
+            + "https://{walletkit_website_url}/walletkit/consumer/pass/save?jwt=" + URLEncoder.encode(jwe));
+    }
+
+    /**
+     * Generate a JWE. This JWE contains full instance information. It's used to add a new instance to HMS wallet serve
+     * and bind it to a user. You should generate a JWE with an instance that has not been added to HMS wallet server.
+     */
+    @Test
+    public void generateJWEToAddInstanceAndBindUser() {
+        System.out.println("generateJWEToAddPassAndBindUser begin.\n");
+
+        // This is the app ID registered on Huawei AGC website.
+        String appId = "Replace with your app ID";
+        // Read a new offer instance.
+        String newInstanceJson = CommonUtil.readJSONFile("OfferInstance.json");
+        JSONObject newInstanceJsonObject = JSONObject.parseObject(newInstanceJson);
+        newInstanceJsonObject.put("iss", appId);
+        String payload = newInstanceJsonObject.toJSONString();
+
+        // You generated a pair of RSA keys while applying for services on AGC. Use that private key here.
+        String jweSignPrivateKey = "Replace with your private key.";
+
+        // Generate a JWE.
+        String jwe = JweUtil.generateJwe(jweSignPrivateKey, payload);
+        System.out.println("JWE String: " + jwe + "\n");
+
+        // Replace {walletkit_website_url} with one of the following strings according to your account location.
+        // walletpass-drcn.cloud.huawei.com for China
+        // walletpass-drru.cloud.huawei.com for Russia
+        // walletpass-dra.cloud.huawei.com for Asia, Africa, and Latin America
+        // walletpass-dre.cloud.huawei.com for Europe
+        System.out.println("JWE link for browser: "
+            + "https://{walletkit_website_url}/walletkit/consumer/pass/save?jwt=" + URLEncoder.encode(jwe));
     }
 }
