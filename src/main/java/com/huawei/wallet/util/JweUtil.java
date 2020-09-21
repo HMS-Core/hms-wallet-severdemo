@@ -16,12 +16,15 @@
 
 package com.huawei.wallet.util;
 
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.zip.GZIPOutputStream;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * JWE utility class.
@@ -41,14 +44,14 @@ public class JweUtil {
         // Part 1: JWE Header.
         // This header contains information about encryption and compression algorithms. It's a constant String.
         System.out.println("Part 1:");
-        JweHeader jweHeader = getHeader();
+        Map jweHeader = getHeader();
         String jweHeaderEncode = getEncodeHeader(jweHeader);
         System.out.println("Encoded header: " + jweHeaderEncode);
 
         // Part 2: JWE Encrypted Key
         // Generate a 16-byte session key to encrypt payload data. Then convert it to a Hex String.
         System.out.println("Part 2:");
-        String sessionKey = RandomUtils.generateSecureRandomFactor(16);
+        String sessionKey = generateSecureRandomFactor(16);
         // Encrypt the session key Hex String with Huawei's fixed sessionKeyPublicKey using
         // RSA/NONE/OAEPwithSHA-256andMGF1Padding algorithm, and then do base64 encoding to it.
         System.out.println("sessionKey: " + sessionKey);
@@ -60,7 +63,7 @@ public class JweUtil {
         // Part 3: JWE IV
         // Generate a 12-byte iv. Then convert it to a Hex String, and then do base64 encoding to the Hex String.
         System.out.println("Part 3:");
-        byte[] iv = AESUtils.getIvByte(12);
+        byte[] iv = AesUtil.getIvByte(12);
         String ivHexStr = new String(Hex.encodeHex(iv, false));
         String ivEncode = Base64.encodeBase64URLSafeString(ivHexStr.getBytes(StandardCharsets.UTF_8));
         System.out.println("Encoded iv: " + ivEncode);
@@ -93,25 +96,25 @@ public class JweUtil {
         return stringBuilder.toString();
     }
 
-    private static JweHeader getHeader() {
-        JweHeader jweHeader = new JweHeader();
-        jweHeader.setAlg("RSA-OAEP");
-        jweHeader.setEnc("A128GCM");
-        jweHeader.setKid("1");
-        jweHeader.setZip("gzip");
+    private static Map<String, String> getHeader() {
+        Map<String, String> jweHeader = new HashMap<>();
+        jweHeader.put("alg", "RSA-OAEP");
+        jweHeader.put("enc", "A128GCM");
+        jweHeader.put("kid", "1");
+        jweHeader.put("zip", "gzip");
         return jweHeader;
     }
 
-    private static String getEncodeHeader(JweHeader jweHeader) {
-        StringBuffer stringBuffer = new StringBuffer();
-        String headerStr = stringBuffer.append("alg=")
-            .append(jweHeader.getAlg())
+    private static String getEncodeHeader(Map jweHeader) {
+        StringBuilder stringBuilder = new StringBuilder();
+        String headerStr = stringBuilder.append("alg=")
+            .append(jweHeader.get("alg"))
             .append(", enc=")
-            .append(jweHeader.getEnc())
+            .append(jweHeader.get("enc"))
             .append(", kid=")
-            .append(jweHeader.getKid())
+            .append(jweHeader.get("kid"))
             .append(", zip=")
-            .append(jweHeader.getZip())
+            .append(jweHeader.get("zip"))
             .toString();
         System.out.println("Header before encoding: " + headerStr);
         // Do base64 encoding.
@@ -120,27 +123,25 @@ public class JweUtil {
 
     private static String getEncryptedKey(String sessionKey, String sessionKeyPublicKey) {
         try {
-            String encryptedSessionKey = RSA.encrypt(sessionKey.getBytes(StandardCharsets.UTF_8), sessionKeyPublicKey,
-                "RSA/NONE/OAEPwithSHA-256andMGF1Padding");
+            String encryptedSessionKey = RsaUtil.encrypt(sessionKey.getBytes(StandardCharsets.UTF_8),
+                sessionKeyPublicKey, "RSA/NONE/OAEPwithSHA-256andMGF1Padding");
             return Base64.encodeBase64URLSafeString(encryptedSessionKey.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
-            System.out.println("Encrypt session key failed.");
+            throw new IllegalArgumentException("Encrypt session key failed. Error: " + e.getMessage());
         }
-        return "";
     }
 
     private static String getCipherText(String dataJson, String sessionKey, byte[] iv) {
-        String payloadEncrypt = AESUtils.encryptByGcm(dataJson, sessionKey, iv);
+        String payloadEncrypt = AesUtil.encryptByGcm(dataJson, sessionKey, iv);
         System.out.println("Encrypted payload Hex String: " + payloadEncrypt);
         byte[] payLoadEncryptCompressByte = compress(payloadEncrypt.getBytes(StandardCharsets.UTF_8));
-        String cipherTextEncode = Base64.encodeBase64URLSafeString(payLoadEncryptCompressByte);
-        return cipherTextEncode;
+        return Base64.encodeBase64URLSafeString(payLoadEncryptCompressByte);
     }
 
     private static String getSignature(String jweSignPrivateKey, String sessionKey, String payLoadJson,
         String jweHeaderEncode, String ivEncode) {
-        StringBuffer stringBuffer = new StringBuffer();
-        String signContent = stringBuffer.append(jweHeaderEncode)
+        StringBuilder stringBuilder = new StringBuilder();
+        String signContent = stringBuilder.append(jweHeaderEncode)
             .append(".")
             .append(sessionKey)
             .append(".")
@@ -149,7 +150,7 @@ public class JweUtil {
             .append(payLoadJson)
             .toString();
         System.out.println("Content to be signed: " + signContent);
-        return RSA.sign(signContent, jweSignPrivateKey);
+        return RsaUtil.sign(signContent, jweSignPrivateKey);
     }
 
     /**
@@ -171,5 +172,18 @@ public class JweUtil {
             System.out.println(e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * Generate random hex string.
+     *
+     * @param size string length.
+     * @return the generated random hex string.
+     */
+    private static String generateSecureRandomFactor(int size) {
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[size];
+        random.nextBytes(bytes);
+        return org.bouncycastle.util.encoders.Hex.toHexString(bytes);
     }
 }

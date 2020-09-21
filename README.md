@@ -264,5 +264,6 @@
 
     8. NFC Card
         You can post NFC information by calling the "postNfcCardPersonalizedData" method.
+
 ### License
 HMS wallet server sample code is licensed under the [Apache License, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).

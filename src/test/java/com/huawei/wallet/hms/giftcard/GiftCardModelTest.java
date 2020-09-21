@@ -16,15 +16,15 @@
 
 package com.huawei.wallet.hms.giftcard;
 
-import com.alibaba.fastjson.JSONObject;
-import com.huawei.wallet.hms.hmssdk.WalletBuildService;
-import com.huawei.wallet.hms.hmssdk.dto.HwWalletObject;
-import com.huawei.wallet.hms.hmssdk.impl.WalletBuildServiceImpl;
-import com.huawei.wallet.util.CommonUtil;
+import com.huawei.wallet.hms.ServerApiService;
+import com.huawei.wallet.hms.ServerApiServiceImpl;
+import com.huawei.wallet.util.ConfigUtil;
 import com.huawei.wallet.util.HwWalletObjectUtil;
-import org.junit.Test;
 
-import java.util.List;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+import org.junit.Test;
 
 /**
  * Gift card model tests.
@@ -32,7 +32,7 @@ import java.util.List;
  * @since 2019-12-12
  */
 public class GiftCardModelTest {
-    private WalletBuildService walletBuildService = new WalletBuildServiceImpl();
+    private final ServerApiService serverApiService = new ServerApiServiceImpl();
 
     /**
      * Create a new gift card model.
@@ -41,24 +41,18 @@ public class GiftCardModelTest {
      */
     @Test
     public void createGiftCardModel() {
-        System.out.println("createGiftCardModel begin");
+        System.out.println("createGiftCardModel begin.");
 
         // Read a gift card model from a JSON file.
-        HwWalletObject model =
-            JSONObject.parseObject(CommonUtil.readJSONFile("GiftCardModel.json"), HwWalletObject.class);
+        JSONObject model = JSONObject.parseObject(ConfigUtil.readFile("GiftCardModel.json"));
 
         // Validate parameters.
-        boolean isValidModel = HwWalletObjectUtil.validateModel(model);
-        if (!isValidModel) {
-            System.out.println("Invalid model parameters.");
-            return;
-        }
+        HwWalletObjectUtil.validateModel(model);
 
         // Post the new gift card model to HMS wallet server.
         String urlSegment = "giftcard/model";
-        HwWalletObject responseModel =
-            walletBuildService.postHwWalletObjectToWalletServer(urlSegment, CommonUtil.toJson(model));
-        System.out.println("Posted gift card model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.postToWalletServer(urlSegment, JSONObject.toJSONString(model));
+        System.out.println("Posted gift card model: " + JSONObject.toJSONString(responseModel));
     }
 
     /**
@@ -75,8 +69,8 @@ public class GiftCardModelTest {
 
         // Get the gift card model.
         String urlSegment = "giftcard/model/";
-        HwWalletObject responseModel = walletBuildService.getHwWalletObjectById(urlSegment, modelId);
-        System.out.println("Corresponding gift card model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.getHwWalletObjectById(urlSegment, modelId);
+        System.out.println("Corresponding gift card model: " + JSONObject.toJSONString(responseModel));
     }
 
     /**
@@ -90,8 +84,10 @@ public class GiftCardModelTest {
 
         // Get a list of gift card models.
         String urlSegment = "giftcard/model";
-        List<HwWalletObject> responseModels = walletBuildService.getModels(urlSegment, 5);
-        System.out.println("Gift card models list: " + CommonUtil.toJson(responseModels));
+
+        JSONArray models = serverApiService.getModels(urlSegment, 5);
+        System.out.println("Total models count: " + models.size());
+        System.out.println("Models list: " + models.toJSONString());
     }
 
     /**
@@ -104,21 +100,16 @@ public class GiftCardModelTest {
         System.out.println("fullUpdateGiftCardModel begin.");
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will overwrite the corresponding model.
-        HwWalletObject model =
-            JSONObject.parseObject(CommonUtil.readJSONFile("FullUpdateGiftCardModel.json"), HwWalletObject.class);
+        JSONObject model = JSONObject.parseObject(ConfigUtil.readFile("FullUpdateGiftCardModel.json"));
 
         // Validate parameters.
-        boolean isValidModel = HwWalletObjectUtil.validateModel(model);
-        if (!isValidModel) {
-            System.out.println("Invalid model parameters.");
-            return;
-        }
+        HwWalletObjectUtil.validateModel(model);
 
         // Update the gift card model.
         String urlSegment = "giftcard/model/";
-        HwWalletObject responseModel = walletBuildService.fullUpdateHwWalletObject(urlSegment,
-            model.getPassStyleIdentifier(), CommonUtil.toJson(model));
-        System.out.println("Updated gift card model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.fullUpdateHwWalletObject(urlSegment,
+            model.getString("passStyleIdentifier"), JSONObject.toJSONString(model));
+        System.out.println("Updated gift card model: " + JSONObject.toJSONString(responseModel));
     }
 
     /**
@@ -134,14 +125,12 @@ public class GiftCardModelTest {
         String modelId = "giftCardModelTest";
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will merge with the corresponding model.
-        HwWalletObject model =
-            JSONObject.parseObject(CommonUtil.readJSONFile("PartialUpdateGiftCardModel.json"), HwWalletObject.class);
+        String modelStr = ConfigUtil.readFile("PartialUpdateGiftCardModel.json");
 
         // Update the gift card model.
         String urlSegment = "giftcard/model/";
-        HwWalletObject responseModel =
-            walletBuildService.partialUpdateHwWalletObject(urlSegment, modelId, CommonUtil.toJson(model));
-        System.out.println("Updated gift card model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.partialUpdateHwWalletObject(urlSegment, modelId, modelStr);
+        System.out.println("Updated gift card model: " + JSONObject.toJSONString(responseModel));
     }
 
     /**
@@ -163,11 +152,11 @@ public class GiftCardModelTest {
         // messages at a time.
 
         // Read messages from a JSON file.
-        String messages = CommonUtil.readJSONFile("Messages.json");
+        String messagesStr = ConfigUtil.readFile("Messages.json");
 
         // Add messages to the gift card model.
-        String urlSegment = "giftcard/model/addMessage";
-        HwWalletObject responseModel = walletBuildService.addMessageToHwWalletObject(urlSegment, modelId, messages);
-        System.out.println("Updated gift card model: " + CommonUtil.toJson(responseModel));
+        String urlSegment = "giftcard/model/";
+        JSONObject responseModel = serverApiService.addMessageToHwWalletObject(urlSegment, modelId, messagesStr);
+        System.out.println("Updated gift card model: " + JSONObject.toJSONString(responseModel));
     }
 }

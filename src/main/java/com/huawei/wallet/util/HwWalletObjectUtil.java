@@ -16,8 +16,7 @@
 
 package com.huawei.wallet.util;
 
-import com.huawei.wallet.hms.hmssdk.dto.Fields;
-import com.huawei.wallet.hms.hmssdk.dto.HwWalletObject;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
@@ -34,139 +33,103 @@ import java.util.Locale;
  */
 public class HwWalletObjectUtil {
 
-    private static final String STRING_STATE_ACTIVE = "active";
+    private static final String STATE_ACTIVE = "active";
 
-    private static final String STRING_STATE_INACTIVE = "inactive";
+    private static final String STATE_INACTIVE = "inactive";
 
-    private static final String STRING_STATE_COMPLETED = "completed";
+    private static final String STATE_COMPLETED = "completed";
 
-    private static final String STRING_STATE_EXPIRED = "expired";
+    private static final String STATE_EXPIRED = "expired";
 
-    private static final List<String> STATE_TYPE_LIST = new ArrayList<>(
-        Arrays.asList(STRING_STATE_ACTIVE, STRING_STATE_INACTIVE, STRING_STATE_COMPLETED, STRING_STATE_EXPIRED));
+    private static final List<String> STATE_TYPE_LIST =
+        new ArrayList<>(Arrays.asList(STATE_ACTIVE, STATE_INACTIVE, STATE_COMPLETED, STATE_EXPIRED));
 
     /**
      * Validate a model.
      *
      * @param model the pass model.
-     * @return if the pass model is valid.
      */
-    public static boolean validateModel(HwWalletObject model) {
-        boolean checkFlag;
+    public static void validateModel(JSONObject model) {
         if (model != null) {
-            checkFlag = checkRequiredParams(model.getPassTypeIdentifier(), "passTypeIdentifier", 64);
-            if (checkFlag) {
-                checkFlag = checkRequiredParams(model.getPassStyleIdentifier(), "passStyleIdentifier", 64);
-            }
-            if (checkFlag) {
-                checkFlag = checkRequiredParams(model.getOrganizationName(), "organizationName", 64);
-            }
-            if (checkFlag) {
-                checkFlag = checkRequiredParams(model.getPassVersion(), "passVersion", 64);
-            }
+            checkRequiredParams(model, "passTypeIdentifier", 64);
+            checkRequiredParams(model, "passStyleIdentifier", 64);
+            checkRequiredParams(model, "organizationName", 64);
+            checkRequiredParams(model, "passVersion", 64);
         } else {
-            System.out.println("The model is null");
-            checkFlag = false;
+            throw new IllegalArgumentException("The model is empty");
         }
-        return checkFlag;
     }
 
     /**
      * Validate an instance.
      *
      * @param instance the instance.
-     * @return if the instance is valid.
      */
-    public static boolean validateInstance(HwWalletObject instance) {
-        boolean checkFlag;
+    public static void validateInstance(JSONObject instance) {
         if (instance != null) {
-            checkFlag = checkRequiredParams(instance.getPassTypeIdentifier(), "passTypeIdentifier", 64);
-            if (checkFlag) {
-                checkFlag = checkRequiredParams(instance.getPassStyleIdentifier(), "passStyleIdentifier", 64);
-            }
-            if (checkFlag) {
-                checkFlag = checkRequiredParams(instance.getOrganizationPassId(), "organizationPassId", 64);
-            }
-            if (checkFlag) {
-                checkFlag = checkRequiredParams(instance.getSerialNumber(), "serialNumber", 64);
-            }
-            if (checkFlag) {
-                checkFlag = validateStatusDate(instance);
-            }
+            checkRequiredParams(instance, "passTypeIdentifier", 64);
+            checkRequiredParams(instance, "passStyleIdentifier", 64);
+            checkRequiredParams(instance, "organizationPassId", 64);
+            checkRequiredParams(instance, "serialNumber", 64);
+            validateStatusDate(instance);
         } else {
-            System.out.println("The instance is null.");
-            checkFlag = false;
+            throw new IllegalArgumentException("The instance is empty.");
         }
-        return checkFlag;
     }
 
     /**
      * Check a required attribute.
      *
-     * @param hwWalletObjectAttr the attribute's value.
+     * @param jsonObject the object to be checked.
      * @param attrName the attribute's name.
      * @param maxLen the attribute's maximum length.
-     * @return if the attribute is defined and valid.
      */
-    private static boolean checkRequiredParams(String hwWalletObjectAttr, String attrName, int maxLen) {
-        if (StringUtils.isEmpty(hwWalletObjectAttr)) {
-            System.out.println(attrName + " is empty.");
-            return false;
+    private static void checkRequiredParams(JSONObject jsonObject, String attrName, int maxLen) {
+        if (!jsonObject.containsKey(attrName) || !(jsonObject.get(attrName) instanceof String)) {
+            throw new IllegalArgumentException(attrName + " is missing.");
         }
-        if (hwWalletObjectAttr.length() > maxLen) {
-            System.out.println(attrName + " exceeds maximum length.");
-            return false;
+        if (jsonObject.getString(attrName).length() > maxLen) {
+            throw new IllegalArgumentException(attrName + " exceeds maximum length.");
         }
-        return true;
     }
 
     /**
      * Check if the Status of an instance is legal.
      *
      * @param instance the instance.
-     * @return if the Status is legal.
      */
-    private static boolean validateStatusDate(HwWalletObject instance) {
-        Fields fields = instance.getFields();
-        if (CommonUtil.isNull(fields) || CommonUtil.isNull(fields.getStatus())) {
-            return true;
+    private static void validateStatusDate(JSONObject instance) {
+        JSONObject fields = instance.getJSONObject("fields");
+        if (fields == null || fields.getJSONObject("status") == null) {
+            return;
         }
-        String state = fields.getStatus().getState();
-        String effectTime = fields.getStatus().getEffectTime();
-        String expireTime = fields.getStatus().getExpireTime();
-        if (!CommonUtil.isNull(state)) {
+        String state = fields.getJSONObject("status").getString("state");
+        String effectTime = fields.getJSONObject("status").getString("effectTime");
+        String expireTime = fields.getJSONObject("status").getString("expireTime");
+        if (!StringUtils.isEmpty(state)) {
             if (!STATE_TYPE_LIST.contains(state.toLowerCase(Locale.getDefault()))) {
-                System.out.println("state is invalid.");
-                return false;
+                throw new IllegalArgumentException("state is invalid.");
             }
         }
 
-        if ((CommonUtil.isNull(effectTime) && !CommonUtil.isNull(expireTime))
-            || (!CommonUtil.isNull(effectTime) && CommonUtil.isNull(expireTime))) {
-            System.out.println("effectTime and expireTime should be both exist or not exist.");
-            return false;
+        if ((StringUtils.isEmpty(effectTime) && !StringUtils.isEmpty(expireTime))
+            || (!StringUtils.isEmpty(effectTime) && StringUtils.isEmpty(expireTime))) {
+            throw new IllegalArgumentException("effectTime and expireTime should be both exist or not exist.");
         }
 
-        if (CommonUtil.isNull(expireTime)) {
-            return true;
+        if (StringUtils.isEmpty(expireTime)) {
+            return;
         }
 
         Date statusEffectTime;
         Date statusExpireTime;
-        try {
-            statusEffectTime = getLocalTimeByUtcString(fields.getStatus().getEffectTime());
-            statusExpireTime = getLocalTimeByUtcString(fields.getStatus().getExpireTime());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
+
+        statusEffectTime = getLocalTimeByUtcString(effectTime);
+        statusExpireTime = getLocalTimeByUtcString(expireTime);
 
         if ((statusExpireTime.before(new Date())) || (statusExpireTime.before(statusEffectTime))) {
-            System.out.println("expireTime must be later than effectTime and current time.");
-            return false;
+            throw new IllegalArgumentException("expireTime must be later than effectTime and current time.");
         }
-
-        return true;
     }
 
     /**
@@ -182,10 +145,9 @@ public class HwWalletObjectUtil {
             try {
                 date = Date.from(Instant.parse(utcTimeString));
             } catch (Exception e) {
-                throw new IllegalArgumentException("Invalid time format: " + utcTimeString);
+                throw new IllegalArgumentException("Invalid time format. Error: " + e.getMessage());
             }
         }
-
         return date;
     }
 }
