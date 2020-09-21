@@ -16,15 +16,15 @@
 
 package com.huawei.wallet.hms.offer;
 
-import com.alibaba.fastjson.JSONObject;
-import com.huawei.wallet.hms.hmssdk.WalletBuildService;
-import com.huawei.wallet.hms.hmssdk.dto.HwWalletObject;
-import com.huawei.wallet.hms.hmssdk.impl.WalletBuildServiceImpl;
-import com.huawei.wallet.util.CommonUtil;
+import com.huawei.wallet.hms.ServerApiService;
+import com.huawei.wallet.hms.ServerApiServiceImpl;
+import com.huawei.wallet.util.ConfigUtil;
 import com.huawei.wallet.util.HwWalletObjectUtil;
-import org.junit.Test;
 
-import java.util.List;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+import org.junit.Test;
 
 /**
  * Offer model tests.
@@ -32,7 +32,7 @@ import java.util.List;
  * @since 2019-12-12
  */
 public class OfferModelTest {
-    private WalletBuildService walletBuildService = new WalletBuildServiceImpl();
+    private final ServerApiService serverApiService = new ServerApiServiceImpl();
 
     /**
      * Create a new offer model.
@@ -41,23 +41,18 @@ public class OfferModelTest {
      */
     @Test
     public void createOfferModel() {
-        System.out.println("createOfferModel begin");
+        System.out.println("createOfferModel begin.");
 
         // Read an offer model from a JSON file.
-        HwWalletObject model = JSONObject.parseObject(CommonUtil.readJSONFile("OfferModel.json"), HwWalletObject.class);
+        JSONObject model = JSONObject.parseObject(ConfigUtil.readFile("OfferModel.json"));
 
         // Validate parameters.
-        boolean isValidModel = HwWalletObjectUtil.validateModel(model);
-        if (!isValidModel) {
-            System.out.println("Invalid model parameters.");
-            return;
-        }
+        HwWalletObjectUtil.validateModel(model);
 
         // Post the new offer model to HMS wallet server.
         String urlSegment = "offer/model";
-        HwWalletObject responseModel =
-            walletBuildService.postHwWalletObjectToWalletServer(urlSegment, CommonUtil.toJson(model));
-        System.out.println("Posted offer model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.postToWalletServer(urlSegment, JSONObject.toJSONString(model));
+        System.out.println("Posted offer model: " + JSONObject.toJSONString(responseModel));
     }
 
     /**
@@ -74,8 +69,8 @@ public class OfferModelTest {
 
         // Get the offer model.
         String urlSegment = "offer/model/";
-        HwWalletObject responseModel = walletBuildService.getHwWalletObjectById(urlSegment, modelId);
-        System.out.println("Corresponding offer model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.getHwWalletObjectById(urlSegment, modelId);
+        System.out.println("Corresponding offer model: " + JSONObject.toJSONString(responseModel));
     }
 
     /**
@@ -89,8 +84,10 @@ public class OfferModelTest {
 
         // Get a list of offer models.
         String urlSegment = "offer/model";
-        List<HwWalletObject> responseModels = walletBuildService.getModels(urlSegment, 5);
-        System.out.println("Offer models list: " + CommonUtil.toJson(responseModels));
+
+        JSONArray models = serverApiService.getModels(urlSegment, 5);
+        System.out.println("Total models count: " + models.size());
+        System.out.println("Models list: " + models.toJSONString());
     }
 
     /**
@@ -103,21 +100,16 @@ public class OfferModelTest {
         System.out.println("fullUpdateOfferModel begin.");
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will overwrite the corresponding model.
-        HwWalletObject model =
-            JSONObject.parseObject(CommonUtil.readJSONFile("FullUpdateOfferModel.json"), HwWalletObject.class);
+        JSONObject model = JSONObject.parseObject(ConfigUtil.readFile("FullUpdateOfferModel.json"));
 
         // Validate parameters.
-        boolean isValidModel = HwWalletObjectUtil.validateModel(model);
-        if (!isValidModel) {
-            System.out.println("Invalid model parameters.");
-            return;
-        }
+        HwWalletObjectUtil.validateModel(model);
 
         // Update the offer model.
         String urlSegment = "offer/model/";
-        HwWalletObject responseModel = walletBuildService.fullUpdateHwWalletObject(urlSegment,
-            model.getPassStyleIdentifier(), CommonUtil.toJson(model));
-        System.out.println("Updated offer model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.fullUpdateHwWalletObject(urlSegment,
+            model.getString("passStyleIdentifier"), JSONObject.toJSONString(model));
+        System.out.println("Updated offer model: " + JSONObject.toJSONString(responseModel));
     }
 
     /**
@@ -133,14 +125,12 @@ public class OfferModelTest {
         String modelId = "offerModelTest";
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will merge with the corresponding model.
-        HwWalletObject model =
-            JSONObject.parseObject(CommonUtil.readJSONFile("PartialUpdateOfferModel.json"), HwWalletObject.class);
+        String modelStr = ConfigUtil.readFile("PartialUpdateOfferModel.json");
 
         // Update the offer model.
         String urlSegment = "offer/model/";
-        HwWalletObject responseModel =
-            walletBuildService.partialUpdateHwWalletObject(urlSegment, modelId, CommonUtil.toJson(model));
-        System.out.println("Updated offer model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.partialUpdateHwWalletObject(urlSegment, modelId, modelStr);
+        System.out.println("Updated offer model: " + JSONObject.toJSONString(responseModel));
     }
 
     /**
@@ -162,11 +152,11 @@ public class OfferModelTest {
         // messages at a time.
 
         // Read messages from a JSON file.
-        String messages = CommonUtil.readJSONFile("Messages.json");
+        String messagesStr = ConfigUtil.readFile("Messages.json");
 
         // Add messages to the offer model.
-        String urlSegment = "offer/model/addMessage";
-        HwWalletObject responseModel = walletBuildService.addMessageToHwWalletObject(urlSegment, modelId, messages);
-        System.out.println("Updated offer model: " + CommonUtil.toJson(responseModel));
+        String urlSegment = "offer/model/";
+        JSONObject responseModel = serverApiService.addMessageToHwWalletObject(urlSegment, modelId, messagesStr);
+        System.out.println("Updated offer model: " + JSONObject.toJSONString(responseModel));
     }
 }

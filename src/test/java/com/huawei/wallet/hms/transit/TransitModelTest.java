@@ -16,15 +16,15 @@
 
 package com.huawei.wallet.hms.transit;
 
-import com.alibaba.fastjson.JSONObject;
-import com.huawei.wallet.hms.hmssdk.WalletBuildService;
-import com.huawei.wallet.hms.hmssdk.dto.HwWalletObject;
-import com.huawei.wallet.hms.hmssdk.impl.WalletBuildServiceImpl;
-import com.huawei.wallet.util.CommonUtil;
+import com.huawei.wallet.hms.ServerApiService;
+import com.huawei.wallet.hms.ServerApiServiceImpl;
+import com.huawei.wallet.util.ConfigUtil;
 import com.huawei.wallet.util.HwWalletObjectUtil;
-import org.junit.Test;
 
-import java.util.List;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+import org.junit.Test;
 
 /**
  * Transit model tests.
@@ -32,7 +32,7 @@ import java.util.List;
  * @since 2019-12-12
  */
 public class TransitModelTest {
-    private WalletBuildService walletBuildService = new WalletBuildServiceImpl();
+    private ServerApiService serverApiService = new ServerApiServiceImpl();
 
     /**
      * Create a new transit model.
@@ -41,24 +41,18 @@ public class TransitModelTest {
      */
     @Test
     public void createTransitModel() {
-        System.out.println("createTransitModel begin");
+        System.out.println("createTransitModel begin.");
 
         // Read a transit model from a JSON file.
-        HwWalletObject model =
-            JSONObject.parseObject(CommonUtil.readJSONFile("TransitModel.json"), HwWalletObject.class);
+        JSONObject model = JSONObject.parseObject(ConfigUtil.readFile("TransitModel.json"));
 
         // Validate parameters.
-        boolean isValidModel = HwWalletObjectUtil.validateModel(model);
-        if (!isValidModel) {
-            System.out.println("Invalid model parameters.");
-            return;
-        }
+        HwWalletObjectUtil.validateModel(model);
 
         // Post the new transit model to HMS wallet server.
         String urlSegment = "transit/model";
-        HwWalletObject responseModel =
-            walletBuildService.postHwWalletObjectToWalletServer(urlSegment, CommonUtil.toJson(model));
-        System.out.println("Posted transit model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.postToWalletServer(urlSegment, JSONObject.toJSONString(model));
+        System.out.println("Posted transit model: " + JSONObject.toJSONString(responseModel));
     }
 
     /**
@@ -75,8 +69,8 @@ public class TransitModelTest {
 
         // Get the transit model.
         String urlSegment = "transit/model/";
-        HwWalletObject responseModel = walletBuildService.getHwWalletObjectById(urlSegment, modelId);
-        System.out.println("Corresponding transit model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.getHwWalletObjectById(urlSegment, modelId);
+        System.out.println("Corresponding transit model: " + JSONObject.toJSONString(responseModel));
     }
 
     /**
@@ -90,8 +84,10 @@ public class TransitModelTest {
 
         // Get a list of transit models.
         String urlSegment = "transit/model";
-        List<HwWalletObject> responseModels = walletBuildService.getModels(urlSegment, 5);
-        System.out.println("Transit models list: " + CommonUtil.toJson(responseModels));
+
+        JSONArray models = serverApiService.getModels(urlSegment, 5);
+        System.out.println("Total models count: " + models.size());
+        System.out.println("Models list: " + models.toJSONString());
     }
 
     /**
@@ -104,21 +100,16 @@ public class TransitModelTest {
         System.out.println("fullUpdateTransitModel begin.");
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will overwrite the corresponding model.
-        HwWalletObject model =
-            JSONObject.parseObject(CommonUtil.readJSONFile("FullUpdateTransitModel.json"), HwWalletObject.class);
+        JSONObject model = JSONObject.parseObject(ConfigUtil.readFile("FullUpdateTransitModel.json"));
 
         // Validate parameters.
-        boolean isValidModel = HwWalletObjectUtil.validateModel(model);
-        if (!isValidModel) {
-            System.out.println("Invalid model parameters.");
-            return;
-        }
+        HwWalletObjectUtil.validateModel(model);
 
         // Update the transit model.
         String urlSegment = "transit/model/";
-        HwWalletObject responseModel = walletBuildService.fullUpdateHwWalletObject(urlSegment,
-            model.getPassStyleIdentifier(), CommonUtil.toJson(model));
-        System.out.println("Updated transit model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.fullUpdateHwWalletObject(urlSegment,
+            model.getString("passStyleIdentifier"), JSONObject.toJSONString(model));
+        System.out.println("Updated transit model: " + JSONObject.toJSONString(responseModel));
     }
 
     /**
@@ -134,14 +125,12 @@ public class TransitModelTest {
         String modelId = "transitModelTest";
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will merge with the corresponding model.
-        HwWalletObject model =
-            JSONObject.parseObject(CommonUtil.readJSONFile("PartialUpdateTransitModel.json"), HwWalletObject.class);
+        String modelStr = ConfigUtil.readFile("PartialUpdateTransitModel.json");
 
         // Update the transit model.
         String urlSegment = "transit/model/";
-        HwWalletObject responseModel =
-            walletBuildService.partialUpdateHwWalletObject(urlSegment, modelId, CommonUtil.toJson(model));
-        System.out.println("Updated transit model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.partialUpdateHwWalletObject(urlSegment, modelId, modelStr);
+        System.out.println("Updated transit model: " + JSONObject.toJSONString(responseModel));
     }
 
     /**
@@ -163,11 +152,11 @@ public class TransitModelTest {
         // messages at a time.
 
         // Read messages from a JSON file.
-        String messages = CommonUtil.readJSONFile("Messages.json");
+        String messagesStr = ConfigUtil.readFile("Messages.json");
 
         // Add messages to the transit model.
         String urlSegment = "transit/model/addMessage";
-        HwWalletObject responseModel = walletBuildService.addMessageToHwWalletObject(urlSegment, modelId, messages);
-        System.out.println("Updated transit model: " + CommonUtil.toJson(responseModel));
+        JSONObject responseModel = serverApiService.addMessageToHwWalletObject(urlSegment, modelId, messagesStr);
+        System.out.println("Updated transit model: " + JSONObject.toJSONString(responseModel));
     }
 }

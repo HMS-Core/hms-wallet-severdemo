@@ -16,17 +16,15 @@
 
 package com.huawei.wallet.hms.eventticket;
 
-import com.alibaba.fastjson.JSONObject;
-import com.huawei.wallet.hms.hmssdk.WalletBuildService;
-import com.huawei.wallet.hms.hmssdk.dto.HwWalletObject;
-import com.huawei.wallet.hms.hmssdk.impl.WalletBuildServiceImpl;
-import com.huawei.wallet.util.CommonUtil;
+import com.huawei.wallet.hms.ServerApiService;
+import com.huawei.wallet.hms.ServerApiServiceImpl;
+import com.huawei.wallet.util.ConfigUtil;
 import com.huawei.wallet.util.HwWalletObjectUtil;
-import com.huawei.wallet.util.JweUtil;
-import org.junit.Test;
 
-import java.net.URLEncoder;
-import java.util.List;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+import org.junit.Test;
 
 /**
  * Event ticket instance tests.
@@ -34,35 +32,30 @@ import java.util.List;
  * @since 2019-12-12
  */
 public class EventTicketInstanceTest {
-    private WalletBuildService walletBuildService = new WalletBuildServiceImpl();
+    private final ServerApiService serverApiService = new ServerApiServiceImpl();
 
     /**
      * Add an event ticket instance to HMS wallet server.
      * Run the "createEventTicketModel" test before running this test.
-     * After using this API, you will use a thin JWE to bind this instance to a user. You can also add an instance by
-     * sending a JWE with all instance information, without using this API. See JWE example methods at the bottom.
+     * After using this API, you will use a thin JWE to bind this instance to a user. Or you can add an instance by
+     * sending a JWE with complete instance information, without using this API. See JWE example tests.
      * POST http://XXX/hmspass/v1/eventticket/instance
      */
     @Test
     public void addEventTicketInstance() {
-        System.out.println("addEventTicketInstance begin");
+        System.out.println("addEventTicketInstance begin.");
 
         // Read an event ticket instance from a JSON file.
-        HwWalletObject instance =
-            JSONObject.parseObject(CommonUtil.readJSONFile("EventTicketInstance.json"), HwWalletObject.class);
+        JSONObject instance = JSONObject.parseObject(ConfigUtil.readFile("EventTicketInstance.json"));
 
         // Validate parameters.
-        boolean isValidInstance = HwWalletObjectUtil.validateInstance(instance);
-        if (!isValidInstance) {
-            System.out.println("Invalid instance parameters.");
-            return;
-        }
+        HwWalletObjectUtil.validateInstance(instance);
 
         // Post the new event ticket instance to HMS wallet server.
         String urlSegment = "eventticket/instance";
-        HwWalletObject responseInstance =
-            walletBuildService.postHwWalletObjectToWalletServer(urlSegment, CommonUtil.toJson(instance));
-        System.out.println("Posted event ticket instance: " + CommonUtil.toJson(responseInstance));
+        JSONObject responseInstance =
+            serverApiService.postToWalletServer(urlSegment, JSONObject.toJSONString(instance));
+        System.out.println("Posted event ticket instance: " + JSONObject.toJSONString(responseInstance));
     }
 
     /**
@@ -79,8 +72,8 @@ public class EventTicketInstanceTest {
 
         // Get the event ticket instance.
         String urlSegment = "eventticket/instance/";
-        HwWalletObject responseInstance = walletBuildService.getHwWalletObjectById(urlSegment, instanceId);
-        System.out.println("Corresponding event ticket instance: " + CommonUtil.toJson(responseInstance));
+        JSONObject responseInstance = serverApiService.getHwWalletObjectById(urlSegment, instanceId);
+        System.out.println("Corresponding event ticket instance: " + JSONObject.toJSONString(responseInstance));
     }
 
     /**
@@ -97,8 +90,10 @@ public class EventTicketInstanceTest {
 
         // Get a list of the event ticket instances.
         String urlSegment = "eventticket/instance";
-        List<HwWalletObject> responseInstances = walletBuildService.getInstances(urlSegment, modelId, 5);
-        System.out.println("Event ticket instances list: " + CommonUtil.toJson(responseInstances));
+
+        JSONArray instances = serverApiService.getInstances(urlSegment, modelId, 5);
+        System.out.println("Total instances count: " + instances.size());
+        System.out.println("Instances list: " + instances.toJSONString());
     }
 
     /**
@@ -111,21 +106,16 @@ public class EventTicketInstanceTest {
         System.out.println("fullUpdateEventTicketInstance begin.");
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will overwrite the corresponding instance.
-        HwWalletObject instance =
-            JSONObject.parseObject(CommonUtil.readJSONFile("FullUpdateEventTicketInstance.json"), HwWalletObject.class);
+        JSONObject instance = JSONObject.parseObject(ConfigUtil.readFile("FullUpdateEventTicketInstance.json"));
 
         // Validate parameters.
-        boolean isValidInstance = HwWalletObjectUtil.validateInstance(instance);
-        if (!isValidInstance) {
-            System.out.println("Invalid instance parameters.");
-            return;
-        }
+        HwWalletObjectUtil.validateInstance(instance);
 
         // Update the event ticket instance.
         String urlSegment = "eventticket/instance/";
-        HwWalletObject responseInstance = walletBuildService.fullUpdateHwWalletObject(urlSegment,
-            instance.getSerialNumber(), CommonUtil.toJson(instance));
-        System.out.println("Updated event ticket instance: " + CommonUtil.toJson(responseInstance));
+        JSONObject responseInstance = serverApiService.fullUpdateHwWalletObject(urlSegment,
+            instance.getString("serialNumber"), JSONObject.toJSONString(instance));
+        System.out.println("Updated event ticket instance: " + JSONObject.toJSONString(responseInstance));
     }
 
     /**
@@ -141,14 +131,12 @@ public class EventTicketInstanceTest {
         String instanceId = "10001";
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will merge with the corresponding instance.
-        HwWalletObject instance = JSONObject
-            .parseObject(CommonUtil.readJSONFile("PartialUpdateEventTicketInstance.json"), HwWalletObject.class);
+        String instanceStr = ConfigUtil.readFile("PartialUpdateEventTicketInstance.json");
 
         // Update the event ticket instance.
         String urlSegment = "eventticket/instance/";
-        HwWalletObject responseInstance =
-            walletBuildService.partialUpdateHwWalletObject(urlSegment, instanceId, CommonUtil.toJson(instance));
-        System.out.println("Updated event ticket instance: " + CommonUtil.toJson(responseInstance));
+        JSONObject responseInstance = serverApiService.partialUpdateHwWalletObject(urlSegment, instanceId, instanceStr);
+        System.out.println("Updated event ticket instance: " + JSONObject.toJSONString(responseInstance));
     }
 
     /**
@@ -170,76 +158,11 @@ public class EventTicketInstanceTest {
         // 10 messages at a time.
 
         // Read messages from a JSON file.
-        String messages = CommonUtil.readJSONFile("Messages.json");
+        String messagesStr = ConfigUtil.readFile("Messages.json");
 
         // Add messages to the event ticket instance.
-        String urlSegment = "eventticket/instance/addMessage";
-        HwWalletObject responseInstance =
-            walletBuildService.addMessageToHwWalletObject(urlSegment, instanceId, messages);
-        System.out.println("Updated event ticket instance: " + CommonUtil.toJson(responseInstance));
-    }
-
-    /**
-     * Generate a thin JWE. This JWEs contains only instanceId information. It's used to bind an existing instance
-     * to a user. You should generate a thin JWE with an instanceId that has already been added to HMS wallet server.
-     */
-    @Test
-    public void generateThinJWEToBindUser() {
-        System.out.println("generateThinJWEToBindUser begin.\n");
-
-        // This is the app ID registered on Huawei AGC website.
-        String appId = "Replace with your app ID";
-        // Bind existing event ticket instances to users. Construct a list of event ticket-instance IDs to be bound.
-        String instanceIdListJson = "{\"instanceIds\": [\"10001\"]}";
-        JSONObject instanceIdListJsonObject = JSONObject.parseObject(instanceIdListJson);
-        instanceIdListJsonObject.put("iss", appId);
-        String payload = instanceIdListJsonObject.toJSONString();
-
-        // You generated a pair of RSA keys while applying for services on AGC. Use that private key here.
-        String jweSignPrivateKey = "Replace with your private key.";
-
-        // Generate a thin JWE.
-        String jwe = JweUtil.generateJwe(jweSignPrivateKey, payload);
-        System.out.println("JWE String: " + jwe + "\n");
-
-        // Replace {walletkit_website_url} with one of the following strings according to your account location.
-        // walletpass-drcn.cloud.huawei.com for China
-        // walletpass-drru.cloud.huawei.com for Russia
-        // walletpass-dra.cloud.huawei.com for Asia, Africa, and Latin America
-        // walletpass-dre.cloud.huawei.com for Europe
-        System.out.println("JWE link to be viewed in a browser: "
-            + "https://{walletkit_website_url}/walletkit/consumer/pass/save?jwt=" + URLEncoder.encode(jwe));
-    }
-
-    /**
-     * Generate a JWE. This JWE contains full instance information. It's used to add a new instance to HMS wallet serve
-     * and bind it to a user. You should generate a JWE with an instance that has not been added to HMS wallet server.
-     */
-    @Test
-    public void generateJWEToAddInstanceAndBindUser() {
-        System.out.println("generateJWEToAddPassAndBindUser begin.\n");
-
-        // This is the app ID registered on Huawei AGC website.
-        String appId = "Replace with your app ID";
-        // Read a new event ticket instance.
-        String newInstanceJson = CommonUtil.readJSONFile("EventTicketInstance.json");
-        JSONObject newInstanceJsonObject = JSONObject.parseObject(newInstanceJson);
-        newInstanceJsonObject.put("iss", appId);
-        String payload = newInstanceJsonObject.toJSONString();
-
-        // You generated a pair of RSA keys while applying for services on AGC. Use that private key here.
-        String jweSignPrivateKey = "Replace with your private key.";
-
-        // Generate a JWE.
-        String jwe = JweUtil.generateJwe(jweSignPrivateKey, payload);
-        System.out.println("JWE String: " + jwe + "\n");
-
-        // Replace {walletkit_website_url} with one of the following strings according to your account location.
-        // walletpass-drcn.cloud.huawei.com for China
-        // walletpass-drru.cloud.huawei.com for Russia
-        // walletpass-dra.cloud.huawei.com for Asia, Africa, and Latin America
-        // walletpass-dre.cloud.huawei.com for Europe
-        System.out.println("JWE link to be viewed in a browser: "
-            + "https://{walletkit_website_url}/walletkit/consumer/pass/save?jwt=" + URLEncoder.encode(jwe));
+        String urlSegment = "eventticket/instance/";
+        JSONObject responseInstance = serverApiService.addMessageToHwWalletObject(urlSegment, instanceId, messagesStr);
+        System.out.println("Updated event ticket instance: " + JSONObject.toJSONString(responseInstance));
     }
 }
