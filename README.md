@@ -1,269 +1,118 @@
-## Table of Contents
 
+# HMS-Wallet-Server Demo Development Tutorial
+### Table of Contents
  * [Introduction](#introduction)
- * [Installation](#installation)
- * [Configuration ](#configuration )
  * [Supported Environments](#supported-environments)
- * [Sample Code](#sample-Code)
+ * [Apply for Wallet Services](#apply-for-wallet-services)
+ * [Set Configuration Values](#set-configuration-values)
+ * [Pass Models and Pass Instances](#pass-models-and-pass-instances)
+ * [Compile the Demo as a Maven Project](#compile-the-demo-as-a-maven-project)
+ * [Example Methods for Pass Models](#example-methods-for-pass-models)
+ * [Example Methods for Pass Instances](#example-methods-for-pass-instances)
+ * [Generate JWE](#generate-jwe)
+ * [Question or issues](#question-or-issues)
  * [License](#license)
 
-### Introduction
-This is sample code for how to use the HMS wallet server interface. The HMS wallet server interface contains REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, Event Ticket).
-You can use these REST APIs to implement operations such as adding, querying or updating. Before you use this Demo, it's assumed that you already have a HUAWEI developer account and have already created an app to implement the
-HMS wallet kit. If you haven't, please refer to https://developer.huawei.com/consumer/en/doc/start/10104 and https://developer.huawei.com/consumer/en/doc/development/AppGallery-Connect/agc-create_app. Refer to
-https://developer.huawei.com/consumer/en/doc/development/HMS-Guides/wallet-preparations to apply for a service for one of the six passes. 
-
-### Installation
-Before running the Demo code, you should have installed Java and Maven.
+## Introduction
+HMS-Wallet-Server Demo is example code showing how to use the HMS-Wallet-Server interface. The HMS-Wallet-Server interface contains REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, and Event Ticket). You can use these REST APIs to implement operations such as adding, querying or updating passes.
+Before you use this Demo, you should have a HUAWEI developer account, and have already created an app to implement the HMS-Wallet-Kit API. This “app” doesn’t have to be a software that will be actually installed on cell phones. It means an application of using the HMS service. So please create an app on the HUAWEI AppGallery Connect (AGC) website even if you are not going to develop mobile apps. If you haven't, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/start/10104) and [Create an App](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-create_app). 
 
 ## Supported Environments
-Oracle Java 1.8.0.211 or above is recommended.
+Maven and Oracle Java 1.8.0.211 or higher are required to run the Demo project.
 
-## Configuration 
-1. To run the sample code, you need to set the following configuration values in the "src\test\resources\release.config.properties" file.
+## Apply for Wallet Services
+Follow [Enabling Services](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-enable_service) to apply for services.
+Please notice that you will set a “Service ID” in your application. The “Service ID” here is “passTypeIdentifier” you will use in the Demo code.
+You will set the “passTypeIdentifier” later. You will generate a pair of RSA keys during this process. Store them properly, and you will use the private key to sign JWEs (see [Generate JWE](#generate-jwe)). The wallet server will use the public key you upload to verify signatures.
+After you finished applying for a service, you can begin to test the corresponding pass. Apply for other services if you want to test other passes.
 
-1). "gw.appid" and "gw.appid.secret":
-To implement the HMS wallet kit to an app, "gw.appid" and "gw.appid.secret" are this app's "App ID" and "App secret" on the HUAWEI AppGallery Connect website.
 
-2). "walletServerBaseUrl":
-Set this value depending on your account location. Get it from https://developer.huawei.com/consumer/en/doc/development/HMS-References/wallet-api-server-address.
+## Set Configuration Values
+Before running the Demo project，you need to set the following configuration values in the “src\test\resources\release.config.properties” file: “gw.appid”, “gw.appid.secret”, “gw.tokenUrl”, “walletServerBaseUrl”, “servicePrivateKey”, and “walletWebsiteBaseUrl”
 
-2. Edit JSON files in the "src/test/resources/data" directory. Set the Service ID you applied on AGC websit to "passTypeIdentifier".
+### Set "gw.appid" and "gw.appid.secret":
+To implement the HMS Wallet Kit to an app, "gw.appid" and "gw.appid.secret" are this app's "App ID" and "App secret". Go to the AGC website, login to your account, click “My apps” and then click the app you want to operate. Then you can find its App ID and App secret.
 
-3. After you set all the configurations values, compile the Demo as a Maven project.
+### Set “gw.tokenUrl”
+Set gw.tokenUrl = https://oauth-login.cloud.huawei.com/oauth2/v3/token. This is the address to obtain a REST API authentication token.
 
-## Sample Code
-Sample methods of using the HMS wallet server interface are listed below. You can follow these examples to operate the passes.
-1. Loyalty card:
-1). Register a Loyalty Card Model.
-You can register a loyalty card model by calling the "createLoyaltyModel" method.
+### Set "walletServerBaseUrl":
+“walletServerBaseUrl” is a common section of the REST APIs’ http requests. Its format is: walletServerBaseUrl = https://{walletkit_server_url}/hmspass/v1/. Set {walletkit_server_url} with one of the values in the following table according to your account’s location. 
+```markdown
+| location      	  |     walletkit_server_url            |
+|-----------------	|------------------------------------	|
+| Chinese Mainland | passentrus-drcn.wallet.hicloud.com 	|
+| Asia          	  | passentrust-dra.wallet.hicloud.com 	|
+| Europe        	  | passentrust-dre.wallet.hicloud.com 	|
+| Latin America 	  | passentrust-dra.wallet.hicloud.com 	|
+| Russia        	  | passentrust-drru.wallet.hicloud.com	|
+```
+### Set “servicePrivateKety”
+You generated a pair of RSA private key and public key while you applied HMS Wallet service on the AGC website. Set the private key here and you will use it to sign JWEs.
 
-2). Query a Loyalty Card Model.
-You can query a loyalty card model by calling the "getLoyaltyModel" method.
+### Set “walletWebsiteBaseUrl”
+“walletWebsiteBaseUrl” is the address of HMW-Wallet-H5 server. Its format is: walletWebsiteBaseUrl=https://{walletkit_website_url}/walletkit/consumer/pass/save. Set {walletkit_server_url} with one of the values in the following table according to your account’s location.
+```markdown
+| location      	  |     walletkit_server_url            |
+|------------------|------------------------------------	|
+| Chinese Mainland | walletpass-drcn.cloud.huawei.com 	  |
+| Asia          	  | walletpass-dra.cloud.huawei.com     |
+| Europe        	  | walletpass-dre.cloud.huawei.com     |
+| Latin America 	  | walletpass-dra.cloud.huawei.com     |
+| Russia        	  | walletpass-drru.cloud.huawei.com    |
+```
 
-3). Query Loyalty Card Models.
-You can query loyalty card models registered in your app by calling the "getLoyaltyModelList" method.
+## Pass Models and Pass Instances
+A pass model is a style of pass instances. Instances belonging to the same model share some common parameters. For example, a boarding pass model contains information about departure time and arrival time, while a boarding pass instance contains a passenger’s name, his seat, his boarding sequence, etc. Each pass instance belongsto a specific model. Hence, you should first create a model before creating instances and performing other operations.
+All pass models and instances have the same data format, which is HwWalletObject. Refer to [HwWalletObject Definition](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/def-0000001050160319-V5) for more details.
+Input parameters of models and instances are passed by JSON files in the Demo project. You can generate your own data by modifying the JSON files in the “src/test/resources/data” folder.
+Remember to set the correct “passTypeIdentifier” in these input JSON files, which should be identical to your “Service ID” on the AGC website.
 
-4). Overwrite a Loyalty Card Model.
-You can overwrite a loyalty card model by calling the "fullUpdateLoyaltyModel" method.
+## Compile the Demo as a Maven Project
+After you set all the configurations values, compile the Demo as a Maven project. It may take a few minutes to deploy all dependencies. How long it takes depends on your settings files and your network environment.
 
-5). Update part of a Loyalty Card Model.
-You can update part of a loyalty card model by calling the "partialUpdateLoyaltyModel" method.
+## Example Methods for Pass Models
+### Register a Pass Model
+The HMS wallet server provides REST APIs to create pass models. See [Creating a Model](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/create-model-0000001050158390-V5). You can add a loyalty model to the server’s database by calling the “createLoyaltyModel” method, and create other types of models likewise. You should create a pass model first before calling any other methods.
 
-6). Add Messages to a Loyalty Card Model.
-You can add messages to a loyalty card model by calling the "addMessageToLoyaltyModel" method.
+### Query a Pass Model
+The HMS wallet server provides REST APIs to query a pass model by its model ID. See [Query a Model](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/query-model-0000001050160345-V5). You can query a loyalty model by calling the “getLoyaltyModel” method, and query other types of models likewise.
 
-7). Add a Loyalty Card Instance.
- You can add a loyalty card instance by calling the "createLoyaltyInstance" method.
+### Query a List of Pass Models
+If your app created multiple models of a pass type (e.g. a gold loyalty card model and a diamond loyalty card model), you can use these APIs to query a list of these models. See [Query Models](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/list-model-0000001050158392-V5). You can query a list of loyalty models by calling the “getLoyaltyModelList” method, and query other types of models likewise.
 
-8). Query a Loyalty Card Instance.
-You can query a loyalty card instance by calling the "getLoyaltyInstancemethod" method.
+### Overwrite a Pass Model
+The HMS wallet server provides REST APIs to overwrite an entire pass model by its model ID. See [Overwrite a Model](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/overwrite-model-0000001050160347-V5). You can overwrite a loyalty model by calling the “fullUpdateLoyaltyModel” method, and overwrite other types of models likewise.
 
-9). Query Loyalty Card Instances.
-You can query loyalty card instances belongs to one of your loyalty card models by calling the "getLoyaltyInstanceList" method.
+### Update a Pass Model
+The HMS wallet server provides REST APIs to update part of a pass model by its model ID. See [Update a Model](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/update-model-0000001050158394-V5). You can overwrite a loyalty model by calling the “partialUpdateLoyaltyModel” method, and update other types of models likewise.
 
-10). Overwrite a Loyalty Card Instance.
-You can overwrite a loyalty card instance by calling the "fullUpdateLoyaltyInstance" method.
+### Add Messages to a Pass Model
+“messageList” is one of the attributes in a pass model, which is a list of messages. You can add messages to a loyalty model by calling the “addMessageToLoyaltyModel” method, and add to other types of models likewise. The “messageList” in a pass model has at most 10 messages. You cannot add more than 10 messages at a time. If the list’s size is already 10 and you keep adding messages, the oldest messages will be removed. See [Add Messages to a Model](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/model-add-message-0000001050160349-V5).
 
-11). Update part of a Loyalty Card Instance.
-You can update part of a loyalty card instance by calling the "partialUpdateLoyaltyInstance" method.
 
-12). Add Messages to a Loyalty Card Instance.
-You can add messages to a loyalty card instance by calling the "addMessageToLoyaltyInstance" method.
+## Example Methods for Pass Instances
 
-13). Link/Unlink an Offer Instance to/from a Loyalty Card Instance.
-You can link or unlink an offer instance to/from a loyalty card instance by calling the "updateLinkedOffersToLoyaltyInstance" method.
+### Add a Pass Instance
+The HMS wallet server provides REST APIs to add pass instances. See [Add an Instance](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/add-instance-0000001050158396-V5). You can add a loyalty instance to the server’s database by calling the “createLoyaltyInstance” method, and create other types of instances likewise. You should create a pass model first before creating instances belonging to it.
 
-2. Offer:
-1). Register an Offer Model.
-You can register an offer model by calling the "createOfferModel" method.
+### Query a Pass Instance
+The HMS wallet server provides REST APIs to query a pass instance by its instance ID. See [Query an Instance](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/query-instance-0000001050160351-V5). You can query a loyalty instance by calling the “getLoyaltyInstance” method, and query other types of instances likewise.
 
-2). Query an Offer Model.
-You can query an offer model by calling the "getOfferModel" method.
+### Overwrite a Pass Instance
+The HMS wallet server provides REST APIs to overwrite an entire pass instance by its instance ID. See [Overwrite an Instance](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/overwrite-instance-0000001050160353-V5). You can overwrite a loyalty instance by calling the “fullUpdateLoyaltyInstance” method, and overwrite other types of instances likewise.
 
-3). Query Offer Models.
-You can query offer models registered in your app by calling the "getOfferModelList" method.
+### Update a Pass Instance
+The HMS wallet server provides REST APIs to update part of a pass instance by its instance ID. See [Update an Instance](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/update-instance-0000001050158400-V5). You can overwrite a loyalty instance by calling the “partialUpdateLoyaltyInstance” method, and update other types of instances likewise.
 
-4). Overwrite an Offer Model.
-You can overwrite an offer model by calling the "fullUpdateOfferModel" method.
+### Add Messages to a Pass Instance
+“messageList” can also be an attribute of a pass instance. You can add messages to a loyalty instance by calling the “addMessageToLoyaltyInstance” method, and add to other types of instances likewise. The “messageList” in a pass instance has at most 10 messages. You cannot add more than 10 messages at a time. If the list’s size is already10 and you keep adding messages, the oldest messages will be removed. See [Add Messages to an Instance](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/instance-add-message-0000001050160355-V5).
 
-5). Update part of an Offer Model.
-You can update part of an offer model by calling the "partialUpdateOfferModel" method.
+### Link/unlink Offer Instances to/from a Loyalty Instance
+This API is only provided for loyalty instances. See [Link/Unlink an Offer](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/link-offer-instance-0000001050158402-V5). You can link/unlink offer instances to/from a loyalty instance by calling the “updateLinkedOffersToLoyaltyInstance” method. You should make sure the offers you want to add already exist before you use this API. Otherwise, the client cannot show an offer that is not in the server’s database. These offer instances can belong to other apps or other developers.
 
-6). Add Messages to an Offer Model.
-You can add messages to an offer model by calling the "addMessageToOfferModel" method.
-
-7). Add an Offer Instance.
-You can add an offer instance by calling the "createOfferInstance" method.
-
-8). Query an Offer Instance.
-You can query an offer instance by calling the "getOfferInstance" method.
-
-9). Query Offer Instances.
-You can query offer instances belongs to one of your offer models by calling the "getOfferInstanceList" method.
-
-10). Overwrite an Offer Instance.
-You can overwrite an offer instance by calling the "fullUpdateOfferInstance" method.
-
-11). Update part of an Offer Instance.
-You can update part of an offer instance by calling the "partialUpdateOfferInstance" method.
-
-12). Add Messages to an Offer Instance.
-You can add messages to an offer instance by calling the "addMessageToOfferInstance" method.
-
-3. Gift Card:
-1). Register a Gift Card Model.
-You can register a gift card model by calling the "createGiftCardModel" method.
-
-2). Query a Gift Card Model.
-You can query a gift card model by calling the "getGiftCardModel" method.
-
-3). Query Gift Card Models.
-You can query gift card models registered in your app by calling the "getGiftCardModelList" method.
-
-4). Overwrite a Gift Card Model.
-You can overwrite a gift card model by calling the "fullUpdateGiftCardModel" method.
-
-5). Update part of a Gift Card Model.
-You can update part of a gift card model by calling the "partialUpdateGiftCardModel" method.
-
-6). Add Messages to a Gift Card Model.
-You can add messages to a gift card model by calling the "addMessageToGiftCardModel" method.
-
-7). Add a Gift Card Instance.
-You can add a gift card instance by calling the "createGiftCardInstance" method.
-
-8). Query a Gift Card Instance.
-You can query a gift card instance by calling the "getGiftCardInstance" method.
-
-9). Query Gift Card Instances.
-You can query gift card instances belongs to one of your gift card models by calling the "getGiftCardInstanceList" method.
-
-10). Overwrite a Gift Card Instance.
-You can overwrite a gift card instance by calling the "fullUpdateGiftCardInstance" method.
-
-11). Update part of a Gift Card Instance.
-You can update part of a gift card instance by calling the "partialUpdateGiftCardInstance" method.
-
-12). Add Messages to a Gift Card Instance.
-You can add messages to a gift card instance by calling the "addMessageToGiftCardInstance" method.
-
-4. Boarding Pass:
-1). Register a Boarding Pass Model.
-You can register a boarding pass model by calling the "createFlightModel" method.
-
-2). Query a Boarding Pass Model.
-You can query a boarding pass model by calling the "getFlightModel" method.
-
-3). Query Boarding Pass Models.
-You can query boarding pass models registered in your app by calling the "getFlightModelList" method.
-
-4). Overwrite a Boarding Pass Model.
-You can overwrite a boarding pass model by calling the "fullUpdateFlightModel" method.
-
-5). Update part of a Boarding Pass Model.
-You can update part of a boarding pass model by calling the "partialUpdateFlightModel" method.
-
-6). Add Messages to a Boarding Pass Model.
-You can add messages to a boarding pass model by calling the "addMessageToFlightModel" method.
-
-7). Add a Boarding Pass Instance.
-You can add a boarding pass instance by calling the "createFlightInstance" method.
-
-8). Query a Boarding Pass Instance.
-You can query a boarding pass instance by calling the "getFlightInstance" method.
-
-9). Query Boarding Pass Instances.
-You can query boarding pass instances belongs to one of your boarding pass models by calling the "getFlightInstanceList" method.
-
-10). Overwrite a Boarding Pass Instance.
-You can overwrite a boarding pass instance by calling the "fullUpdateFlightInstance" method.
-
-11). Update part of a Boarding Pass Instance.
-You can update part of a boarding pass instance by calling the "partialUpdateFlightInstance" method.
-
-12). Add Messages to a Boarding Pass Instance.
-You can add messages to a boarding pass instance by calling the "addMessageToFlightInstance" method.
-
-5. Transit Pass:
-1). Register a Transit Pass Model.
-You can register a transit pass model by calling the "createTransitModel" method.
-
-2). Query a Transit Pass Model.
-You can query a transit pass model by calling the "getTransitModel" method.
-
-3). Query Transit Pass Models.
-You can query transit pass models registered in your app by calling the "getTransitModelList" method.
-
-4). Overwrite a Transit Pass Model.
-You can overwrite a transit pass model by calling the "fullUpdateTransitModel" method.
-
-5). Update part of a Transit Pass Model.
-You can update part of a transit pass model by calling the "partialUpdateTransitModel" method.
-
-6). Add Messages to a Transit Pass Model.
-You can add messages to a transit pass model by calling the "addMessageToTransitModel" method.
-
-7). Add a Transit Pass Instance.
-You can add a transit pass instance by calling the "createTransitInstance" method.
-
-8). Query a Transit Pass Instance.
-You can query a transit pass instance by calling the "getTransitInstance" method.
-
-9). Query Transit Pass Instances.
-You can query transit pass instances belongs to one of your transit pass models by calling the "getTransitInstanceList" method.
-
-10). Overwrite a Transit Pass Instance.
-You can overwrite a transit pass instance by calling the "fullUpdateTransitInstance" method.
-
-11). Update part of a Transit Pass Instance.
-You can update part of a transit pass instance by calling the "partialUpdateTransitInstance" method.
-
-12). Add Messages to a Transit Pass Instance.
-You can add messages to a transit pass instance by calling the "addMessageToTransitInstance" method.
-
-6. Event Ticket:
-1). Register an Event Ticket Model.
-You can register an event ticket model by calling the "createEventTicketModel" method.
-
-2). Query an Event Ticket Model.
-You can query an event ticket model by calling the "getEventTicketModel" method.
-
-3). Query Event Ticket Models.
-You can query event ticket models registered in your app by calling the "getEventTicketModelList" method.
-
-4). Overwrite an Event Ticket Model.
-You can overwrite an event ticket model by calling the "fullUpdateEventTicketModel" method.
-
-5). Update part of an Event Ticket Model.
-You can update part of an event ticket model by calling the "partialUpdateEventTicketModel" method.
-
-6). Add Messages to an Event Ticket Model.
-You can add messages to an event ticket model by calling the "addMessageToEventTicketModel" method.
-
-7). Add an Event Ticket Instance.
-You can add an event ticket instance by calling the "createEventTicketInstance" method.
-
-8). Query an Event Ticket Instance.
-You can query an event ticket instance by calling the "getEventTicketInstance" method.
-
-9). Query Event Ticket Instances.
-You can query event ticket instances belongs to one of your event ticket models by calling the "getEventTicketInstanceList" method.
-
-10). Overwrite an Event Ticket Instance.
-You can overwrite an event ticket instance by calling the "fullUpdateEventTicketInstance" method.
-
-11). Update part of an Event Ticket Instance.
-You can update part of an event ticket instance by calling the "partialUpdateEventTicketInstance" method.
-
-12). Add Messages to an Event Ticket Instance.
-You can add messages to an event ticket instance by calling the "addMessageToEventTicketInstance" method.
-
-7. Generate JSON Web Encryption (JWE):
-You can call the "generateThinJWEToBindUser" or "generateJWEToAddPassAndBindUser" methods to generate JWEs. These JWEs are used to bind wallet pass instances to users.
-
-8. NFC Card
-You can post NFC information by calling the "postNfcCardPersonalizedData" method.
+## Generate JWE
+Developers need to generate JSON Web Encryption(JWE) strings and send them to HMS-Wallet-H5 server (See [Set “walletWebsiteBaseUrl”](#set-“walletwebsitebaseurl”)) to bind a pass instance to a Huawei Wallet user. There are two ways to generate JWEs. The first way: you can generate a JWE string with complete information of a pass instance and send it to the HMS-Wallet-H5 server. By this way, you don’t need to call methods in 8.1. The second way: you can call methods in 8.1 to add a pass instance to wallet server first, and then generate a thin JWE (with only instance ID information) and send it to the HMS-Wallet-H5 server to bind the pass instance to a user. The demo has example methods for generating JWEs and thin JWEs. Please refer to the demo and implement the code in your own system. Please refer to Integrate Add to HUAWEI Wallet Button (section “Generating a JWE and Sending It to the Huawei Server” and section “Generating a Thin JWE and Sending It to the Huawei Server”) for more details.
 
 ## Question or issues
 If you want to evaluate more about HMS Core,
