@@ -38,29 +38,26 @@ Set gw.tokenUrl = https://oauth-login.cloud.huawei.com/oauth2/v3/token. This is 
 
 ### Set "walletServerBaseUrl":
 “walletServerBaseUrl” is a common section of the REST APIs’ http requests. Its format is: walletServerBaseUrl = https://{walletkit_server_url}/hmspass/v1/. Set {walletkit_server_url} with one of the values in the following table according to your account’s location. 
-```markdown
-| location      	  |     walletkit_server_url            |
-|-----------------	|------------------------------------	|
-| Chinese Mainland | passentrus-drcn.wallet.hicloud.com 	|
-| Asia          	  | passentrust-dra.wallet.hicloud.com 	|
-| Europe        	  | passentrust-dre.wallet.hicloud.com 	|
-| Latin America 	  | passentrust-dra.wallet.hicloud.com 	|
-| Russia        	  | passentrust-drru.wallet.hicloud.com	|
-```
+| location         	| walletkit_server_url                	|
+|------------------	|-------------------------------------	|
+| Chinese Mainland 	| passentrust-drcn.wallet.hicloud.com 	|
+| Asia             	| passentrust-dra.wallet.hicloud.com  	|
+| Europe           	| passentrust-dre.wallet.hicloud.com  	|
+| Latin America    	| passentrust-dra.wallet.hicloud.com  	|
+| Russia           	| passentrust-drru.wallet.hicloud.com 	|
+
 ### Set “servicePrivateKety”
 You generated a pair of RSA private key and public key while you applied HMS Wallet service on the AGC website. Set the private key here and you will use it to sign JWEs.
 
 ### Set “walletWebsiteBaseUrl”
 “walletWebsiteBaseUrl” is the address of HMW-Wallet-H5 server. Its format is: walletWebsiteBaseUrl=https://{walletkit_website_url}/walletkit/consumer/pass/save. Set {walletkit_server_url} with one of the values in the following table according to your account’s location.
-```markdown
 | location      	  |     walletkit_server_url            |
-|------------------|------------------------------------	|
-| Chinese Mainland | walletpass-drcn.cloud.huawei.com 	  |
+|-------------------|------------------------------------	|
+| Chinese Mainland  | walletpass-drcn.cloud.huawei.com 	  |
 | Asia          	  | walletpass-dra.cloud.huawei.com     |
 | Europe        	  | walletpass-dre.cloud.huawei.com     |
 | Latin America 	  | walletpass-dra.cloud.huawei.com     |
 | Russia        	  | walletpass-drru.cloud.huawei.com    |
-```
 
 ## Pass Models and Pass Instances
 A pass model is a style of pass instances. Instances belonging to the same model share some common parameters. For example, a boarding pass model contains information about departure time and arrival time, while a boarding pass instance contains a passenger’s name, his seat, his boarding sequence, etc. Each pass instance belongsto a specific model. Hence, you should first create a model before creating instances and performing other operations.
