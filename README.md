@@ -14,16 +14,16 @@
  * [License](#license)
 
 ## Introduction
-HMS-Wallet-Server Demo is example code showing how to use the HMS-Wallet-Server interface. The HMS-Wallet-Server interface contains REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, and Event Ticket). You can use these REST APIs to implement operations such as adding, querying or updating passes.
+HMS-Wallet-Server Demo is example code showing how to use the HMS-Wallet-Server interface. The HMS-Wallet-Server interface contains REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, and Event Ticket). You can use these REST APIs to implement operations such as adding, querying or updating passes.<br>
 Before you use this Demo, you should have a HUAWEI developer account, and have already created an app to implement the HMS-Wallet-Kit API. This “app” doesn’t have to be a software that will be actually installed on cell phones. It means an application of using the HMS service. So please create an app on the HUAWEI AppGallery Connect (AGC) website even if you are not going to develop mobile apps. If you haven't, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/start/10104) and [Create an App](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-create_app). 
 
 ## Supported Environments
 Maven and Oracle Java 1.8.0.211 or higher are required to run the Demo project.
 
 ## Apply for Wallet Services
-Follow [Enabling Services](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-enable_service) to apply for services.
-Please notice that you will set a “Service ID” in your application. The “Service ID” here is “passTypeIdentifier” you will use in the Demo code.
-You will set the “passTypeIdentifier” later. You will generate a pair of RSA keys during this process. Store them properly, and you will use the private key to sign JWEs (see [Generate JWE](#generate-jwe)). The wallet server will use the public key you upload to verify signatures.
+Follow [Enabling Services](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-enable_service) to apply for services.<br>
+Please notice that you will set a “Service ID” in your application. The “Service ID” here is “passTypeIdentifier” you will use in the Demo code. You will set the “passTypeIdentifier” later.<br>
+You will generate a pair of RSA keys during this process. Store them properly, and you will use the private key to sign JWEs (see [Generate JWE](#generate-jwe)). The wallet server will use the public key you upload to verify signatures.<br>
 After you finished applying for a service, you can begin to test the corresponding pass. Apply for other services if you want to test other passes.
 
 
@@ -50,8 +50,8 @@ Set gw.tokenUrl = https://oauth-login.cloud.huawei.com/oauth2/v3/token. This is 
 You generated a pair of RSA private key and public key while you applied HMS Wallet service on the AGC website. Set the private key here and you will use it to sign JWEs.
 
 ### Set “walletWebsiteBaseUrl”
-“walletWebsiteBaseUrl” is the address of HMW-Wallet-H5 server. Its format is: walletWebsiteBaseUrl=https://{walletkit_website_url}/walletkit/consumer/pass/save. Set {walletkit_server_url} with one of the values in the following table according to your account’s location.
-| location      	  |     walletkit_server_url            |
+“walletWebsiteBaseUrl” is the address of HMW-Wallet-H5 server. Its format is: walletWebsiteBaseUrl=https://{walletkit_website_url}/walletkit/consumer/pass/save. Set {walletkit_website_url} with one of the values in the following table according to your account’s location.
+| location      	  | walletkit_website_url               |
 |-------------------|------------------------------------	|
 | Chinese Mainland  | walletpass-drcn.cloud.huawei.com 	  |
 | Asia          	  | walletpass-dra.cloud.huawei.com     |
@@ -60,9 +60,9 @@ You generated a pair of RSA private key and public key while you applied HMS Wal
 | Russia        	  | walletpass-drru.cloud.huawei.com    |
 
 ## Pass Models and Pass Instances
-A pass model is a style of pass instances. Instances belonging to the same model share some common parameters. For example, a boarding pass model contains information about departure time and arrival time, while a boarding pass instance contains a passenger’s name, his seat, his boarding sequence, etc. Each pass instance belongsto a specific model. Hence, you should first create a model before creating instances and performing other operations.
-All pass models and instances have the same data format, which is HwWalletObject. Refer to [HwWalletObject Definition](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/def-0000001050160319-V5) for more details.
-Input parameters of models and instances are passed by JSON files in the Demo project. You can generate your own data by modifying the JSON files in the “src/test/resources/data” folder.
+A pass model is a style of pass instances. Instances belonging to the same model share some common parameters. For example, a boarding pass model contains information about departure time and arrival time, while a boarding pass instance contains a passenger’s name, his seat, his boarding sequence, etc. Each pass instance belongsto a specific model. Hence, you should first create a model before creating instances and performing other operations.<br>
+All pass models and instances have the same data format, which is HwWalletObject. Refer to [HwWalletObject Definition](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/def-0000001050160319-V5) for more details.<br>
+Input parameters of models and instances are passed by JSON files in the Demo project. You can generate your own data by modifying the JSON files in the “src/test/resources/data” folder.<br>
 Remember to set the correct “passTypeIdentifier” in these input JSON files, which should be identical to your “Service ID” on the AGC website.
 
 ## Compile the Demo as a Maven Project
@@ -109,7 +109,9 @@ The HMS wallet server provides REST APIs to update part of a pass instance by it
 This API is only provided for loyalty instances. See [Link/Unlink an Offer](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/link-offer-instance-0000001050158402-V5). You can link/unlink offer instances to/from a loyalty instance by calling the “updateLinkedOffersToLoyaltyInstance” method. You should make sure the offers you want to add already exist before you use this API. Otherwise, the client cannot show an offer that is not in the server’s database. These offer instances can belong to other apps or other developers.
 
 ## Generate JWE
-Developers need to generate JSON Web Encryption(JWE) strings and send them to HMS-Wallet-H5 server (See [Set “walletWebsiteBaseUrl”](#set-“walletwebsitebaseurl”)) to bind a pass instance to a Huawei Wallet user. There are two ways to generate JWEs. The first way: you can generate a JWE string with complete information of a pass instance and send it to the HMS-Wallet-H5 server. By this way, you don’t need to call methods in 8.1. The second way: you can call methods in 8.1 to add a pass instance to wallet server first, and then generate a thin JWE (with only instance ID information) and send it to the HMS-Wallet-H5 server to bind the pass instance to a user. The demo has example methods for generating JWEs and thin JWEs. Please refer to the demo and implement the code in your own system. Please refer to Integrate Add to HUAWEI Wallet Button (section “Generating a JWE and Sending It to the Huawei Server” and section “Generating a Thin JWE and Sending It to the Huawei Server”) for more details.
+Developers need to generate JSON Web Encryption(JWE) strings and send them to HMS-Wallet-H5 server (See [Set “walletWebsiteBaseUrl”](#set-“walletwebsitebaseurl”)) to bind a pass instance to a Huawei Wallet user.<br>
+There are two ways to generate JWEs. The first way: you can generate a JWE string with complete information of a pass instance and send it to the HMS-Wallet-H5 server. By this way, you don’t need to call methods in 8.1. The second way: you can call methods in 8.1 to add a pass instance to wallet server first, and then generate a thin JWE (with only instance ID information) and send it to the HMS-Wallet-H5 server to bind the pass instance to a user.<br>
+The demo has example methods for generating JWEs and thin JWEs. Please refer to the demo and implement the code in your own system. Please also refer to [Integrate Add to HUAWEI Wallet Button](https://developer.huawei.com/consumer/en/doc/development/HMSCore-Guides-V5/guide-webpage-0000001050042334-V5) (section “Generating a JWE and Sending It to the Huawei Server” and section “Generating a Thin JWE and Sending It to the Huawei Server”) for more details.
 
 ## Question or issues
 If you want to evaluate more about HMS Core,
