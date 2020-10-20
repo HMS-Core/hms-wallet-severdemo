@@ -19,7 +19,7 @@
 
 ## Introduction
 HUAWEI-Wallet-Server Demo is sample code showing how to use the HUAWEI-Wallet-Server interfaces. The HUAWEI-Wallet-Server interfaces contain REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, and Event Ticket). You can use these REST APIs to implement operations such as adding, querying or updating passes.<br>
-Before you use this Demo, you should have a HUAWEI developer account, and have already created an app to implement the HUAWEI wallet service. This “app” doesn’t have to be a software that will be actually installed on cell phones. It means an application of using the HUAWEI wallet service. So please create an app on the HUAWEI AppGallery Connect (AGC) website even if you are not going to develop mobile apps. If you haven't, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/start/10104) and [Create an App](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-create_app). 
+Before you use this Demo, you should have a HUAWEI developer account, and have already created an app to implement the HUAWEI wallet service. This “app” doesn’t have to be a software that will be actually installed on cell phones. It means an application of using the HUAWEI wallet service. So please create an app on the [HUAWEI AppGallery Connect (AGC) website](https://developer.huawei.com/consumer/en/service/josp/agc/index.html) even if you are not going to develop mobile apps. If you haven't, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/start/10104) and [Create an App](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-create_app). 
 
 ## Supported Environments
 Maven and Oracle Java 1.8.0.211 or higher are required to run the Demo project.
@@ -34,7 +34,7 @@ After you finished applying for a service ID, you can begin to test the correspo
 Before running the Demo project，you need to set the following configuration values in the “src\test\resources\release.config.properties” file: “gw.appid”, “gw.appid.secret”, “gw.tokenUrl”, “walletServerBaseUrl”, “servicePrivateKey”, and “walletWebsiteBaseUrl”
 
 #### Set "gw.appid" and "gw.appid.secret":
-To implement the Wallet Kit to an app, "gw.appid" and "gw.appid.secret" are this app's "App ID" and "App secret". Go to the AGC website, login to your account, click “My apps” and then click the app you want to operate. Then you can find its App ID and App secret.
+To implement the Wallet Kit to an app, "gw.appid" and "gw.appid.secret" are this app's "App ID" and "App secret". Go to the [AGC website](https://developer.huawei.com/consumer/en/service/josp/agc/index.html), login to your account, click “My apps” and then click the app you want to operate. Then you can find its App ID and App secret.
 
 #### Set “gw.tokenUrl”
 Set gw.tokenUrl = https://oauth-login.cloud.huawei.com/oauth2/v3/token. This is the address to obtain a REST API authentication token.
@@ -50,7 +50,7 @@ Set gw.tokenUrl = https://oauth-login.cloud.huawei.com/oauth2/v3/token. This is 
 | Russia           	| passentrust-drru.wallet.hicloud.com 	|
 
 #### Set “servicePrivateKety”
-You generated a pair of RSA private key and public key while you applying for Wallet Kit service on the AGC website. Set the private key here and you will use it to sign JWEs.
+You generated a pair of RSA private key and public key while you applying for Wallet Kit service on the [AGC website](https://developer.huawei.com/consumer/en/service/josp/agc/index.html). Set the private key here and you will use it to sign JWEs.
 
 #### Set “walletWebsiteBaseUrl”
 “walletWebsiteBaseUrl” is the address of HUAWEI-Wallet-H5 server. Its format is: walletWebsiteBaseUrl=https://{walletkit_website_url}/walletkit/consumer/pass/save. Set {walletkit_website_url} with one of the values in the following table according to your account’s location.
@@ -66,7 +66,7 @@ You generated a pair of RSA private key and public key while you applying for Wa
 A pass model is a style of pass instances. Instances belonging to the same model share some common parameters. For example, a boarding pass model contains information about departure time and arrival time, while a boarding pass instance contains a passenger’s name, his seat, his boarding sequence, etc. Each pass instance belongsto a specific model. Hence, you should first create a model before creating instances and performing other operations.<br>
 All pass models and instances have the same data format, which is HwWalletObject. Refer to [HwWalletObject Definition](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/def-0000001050160319-V5) for more details.<br>
 Input parameters of models and instances are passed by JSON files in the Demo project. You can generate your own data by modifying the JSON files in the “src/test/resources/data” folder.<br>
-Remember to set the correct “passTypeIdentifier” in these input JSON files, which should be identical to your “Service ID” on the AGC website.
+Remember to set the correct “passTypeIdentifier” in these input JSON files, which should be identical to your “Service ID” on the [AGC website](https://developer.huawei.com/consumer/en/service/josp/agc/index.html).
 
 ## Compile the Demo as a Maven Project
 After you set all the configurations values, compile the Demo as a Maven project. It may take a few minutes to deploy all dependencies. How long it takes depends on your settings files and your network environment.
