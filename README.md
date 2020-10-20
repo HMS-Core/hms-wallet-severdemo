@@ -1,4 +1,4 @@
-# HUAWEI-Wallet-Server Demo
+# HUAWEI Wallet Kit Server Demo
 ### Table of Contents
 * [Introduction](#introduction)
 * [Supported Environments](#supported-environments)
@@ -10,14 +10,13 @@
    1. [Example Methods for Pass Models](#example-methods-for-pass-models)
    1. [Example Methods for Pass Instances](#example-methods-for-pass-instances)
    1. [Generate JWE](#generate-jwe)
-   1. [Signature Validation](#signature-validation)
 * [Question or issues](#question-or-issues)
 * [License](#license)
 
 
 
 ## Introduction
-HUAWEI-Wallet-Server Demo is sample code showing how to use the HUAWEI-Wallet-Server interfaces. The HUAWEI-Wallet-Server interfaces contain REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, and Event Ticket). You can use these REST APIs to implement operations such as adding, querying, or updating passes.<br>
+HUAWEI Wallet Kit Server Demo is sample code showing how to use the HUAWEI-Wallet-Server interfaces. The HUAWEI-Wallet-Server interfaces contain REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, and Event Ticket). You can use these REST APIs to implement operations such as adding, querying, or updating passes.<br>
 Before you use this Demo, you should have a HUAWEI developer account, and have already created an app to implement the HUAWEI wallet service. This “app” doesn’t have to be a program that will be actually installed on cell phones. It means an application of using the HUAWEI wallet service. So please create an app on the [HUAWEI AppGallery Connect (AGC) website](https://developer.huawei.com/consumer/en/service/josp/agc/index.html) even if you are not going to develop mobile apps. If you haven't, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/start/10104) and [Create an App](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-create_app). 
 
 ## Supported Environments
@@ -115,9 +114,6 @@ Developers need to generate JSON Web Encryption (JWE) strings and send them to t
 There are two ways to generate JWEs. The first way: you can generate a JWE string with complete information of a pass instance and send it to the HUAWEI-Wallet-H5 server. In this way, you don’t need to call [add-pass-instance methods](#add-a-pass-instance). The second way: you can [add a pass instance](#add-a-pass-instance) to the wallet server first, and then generate a thin JWE (with only instance ID information) and send it to the HUAWEI-Wallet-H5 server to bind the pass instance to a user.<br>
 The demo has example methods for generating JWEs and thin JWEs. Please refer to the demo and implement the code in your own system. Please also refer to [Integrate Add to HUAWEI Wallet Button](https://developer.huawei.com/consumer/en/doc/development/HMSCore-Guides-V5/guide-webpage-0000001050042334-V5) (section “Generating a JWE and Sending It to the Huawei Server” and section “Generating a Thin JWE and Sending It to the Huawei Server”) for more details.
 
-### Signature Validation
-If you provide a Callback URL or an NFC Callback URL during [applying for Wallet Kit service](#apply-for-wallet-kit-service), you will receive callback notification requests from the HUAWEI wallet server. You should verify the signature in the request header with HUAWEI's fixed signature public key. The test case "verifySignature" gives an example of verifying a signature. Refer to [Callback APIs](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/public-0000001050158472-V5) for more details.
-
 ## Question or issues
 If you want to evaluate more about HMS Core,
 [r/HMSCore on Reddit](https://www.reddit.com/r/HuaweiDevelopers/) is for you to keep up with the latest news about HMS Core, and to exchange insights with other developers.
@@ -130,4 +126,4 @@ If you have questions about how to use HMS samples, try the following options:
 If you run into a bug in our samples, please submit an [issue](https://github.com/HMS-Core/hms-scan-demo/issues) to the Repository. Even better you can submit a [Pull Request](https://github.com/HMS-Core/hms-scan-demo/pulls) with a fix.
 
 ## License
-HUAWEI-Wallet-Server Demo is licensed under the [Apache License, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+HUAWEI Wallet Kit Server Demo is licensed under the [Apache License, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
