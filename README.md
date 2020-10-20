@@ -1,5 +1,4 @@
-
-# HUAWEI-Wallet-Server Demo Development Tutorial
+# HUAWEI-Wallet-Server Demo
 ### Table of Contents
 * [Introduction](#introduction)
 * [Supported Environments](#supported-environments)
