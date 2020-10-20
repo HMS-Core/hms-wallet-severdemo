@@ -1,19 +1,19 @@
 
 # HUAWEI-Wallet-Server Demo Development Tutorial
 ### Table of Contents
-1. [Introduction](#introduction)
-1. [Supported Environments](#supported-environments)
-1. [Apply for Wallet Kit Service](#apply-for-wallet-kit-service)
-1. [Set Configuration Values](#set-configuration-values)
-1. [Pass Models and Pass Instances](#pass-models-and-pass-instances)
-1. [Compile the Demo as a Maven Project](#compile-the-demo-as-a-maven-project)
-1. [Example Methods](#example-methods)
+* [Introduction](#introduction)
+* [Supported Environments](#supported-environments)
+* [Apply for Wallet Kit Service](#apply-for-wallet-kit-service)
+* [Set Configuration Values](#set-configuration-values)
+* [Pass Models and Pass Instances](#pass-models-and-pass-instances)
+* [Compile the Demo as a Maven Project](#compile-the-demo-as-a-maven-project)
+* [Example Methods](#example-methods)
    1. [Example Methods for Pass Models](#example-methods-for-pass-models)
    1. [Example Methods for Pass Instances](#example-methods-for-pass-instances)
    1. [Generate JWE](#generate-jwe)
    1. [Signature Validation](#signature-validation)
-1. [Question or issues](#question-or-issues)
-1. [License](#license)
+* [Question or issues](#question-or-issues)
+* [License](#license)
 
 
 
@@ -117,7 +117,7 @@ There are two ways to generate JWEs. The first way: you can generate a JWE strin
 The demo has example methods for generating JWEs and thin JWEs. Please refer to the demo and implement the code in your own system. Please also refer to [Integrate Add to HUAWEI Wallet Button](https://developer.huawei.com/consumer/en/doc/development/HMSCore-Guides-V5/guide-webpage-0000001050042334-V5) (section “Generating a JWE and Sending It to the Huawei Server” and section “Generating a Thin JWE and Sending It to the Huawei Server”) for more details.
 
 ### Signature Validation
-If you provides a Callback URL or a NFC Callback URL during [applying for Wallet Kit service](#apply-for-wallet-kit-service)), you will receive callback notification requests from HUAWEI wallet server. You should verify the signature in the request header with Huawei's fixed signature public key. The test case "verifySignature" gives a example of verifying a signature. Refer to [Callback APIs](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/public-0000001050158472-V5) for more details.
+If you provides a Callback URL or a NFC Callback URL during [applying for Wallet Kit service](#apply-for-wallet-kit-service), you will receive callback notification requests from HUAWEI wallet server. You should verify the signature in the request header with Huawei's fixed signature public key. The test case "verifySignature" gives a example of verifying a signature. Refer to [Callback APIs](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/public-0000001050158472-V5) for more details.
 
 ## Question or issues
 If you want to evaluate more about HMS Core,
