@@ -43,11 +43,11 @@ Set gw.tokenUrl = https://oauth-login.cloud.huawei.com/oauth2/v3/token. This is 
 “walletServerBaseUrl” is a common section of the REST APIs’ http requests. Its format is: walletServerBaseUrl = https://{walletkit_server_url}/hmspass. Set {walletkit_server_url} with one of the values in the following table according to your account’s location. 
 | location         	| walletkit_server_url                	|
 |------------------	|-------------------------------------	|
-| Chinese Mainland 	| passentrust-drcn.wallet.hicloud.com 	|
-| Asia             	| passentrust-dra.wallet.hicloud.com  	|
-| Europe           	| passentrust-dre.wallet.hicloud.com  	|
-| Latin America    	| passentrust-dra.wallet.hicloud.com  	|
-| Russia           	| passentrust-drru.wallet.hicloud.com 	|
+| Chinese Mainland 	| wallet-passentrust-drcn.cloud.huawei.com.cn 	|
+| Asia             	| wallet-passentrust-dra.cloud.huawei.asia  	|
+| Europe           	| wallet-passentrust-dre.cloud.huawei.eu  	|
+| Latin America    	| wallet-passentrust-dra.cloud.huawei.lat  	|
+| Russia           	| wallet-passentrust-drru.cloud.huawei.ru 	|
 
 #### Set “servicePrivateKety”
 You generated a pair of RSA private key and public key while you applying for Wallet Kit service on the [AGC website](https://developer.huawei.com/consumer/en/service/josp/agc/index.html). Set the private key here and you will use it to sign JWEs.
