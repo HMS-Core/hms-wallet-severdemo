@@ -113,7 +113,7 @@ This API is only provided for loyalty instances. See [Link/Unlink an Offer](http
 
 ### Generate JWE
 Developers need to generate JSON Web Encryption(JWE) strings and send them to HUAWI-Wallet-H5 server (See [Set “walletWebsiteBaseUrl”](#set-“walletwebsitebaseurl”)) to bind a pass instance to a Huawei Wallet user.<br>
-There are two ways to generate JWEs. The first way: you can generate a JWE string with complete information of a pass instance and send it to the HUAWEI-Wallet-H5 server. By this way, you don’t need to call methods in 8.1. The second way: you can call methods in 8.1 to add a pass instance to wallet server first, and then generate a thin JWE (with only instance ID information) and send it to the HUAWEI-Wallet-H5 server to bind the pass instance to a user.<br>
+There are two ways to generate JWEs. The first way: you can generate a JWE string with complete information of a pass instance and send it to the HUAWEI-Wallet-H5 server. By this way, you don’t need to call [add-pass-instance methods](#add-a-pass-instance). The second way: you can [add a pass instance](#add-a-pass-instance) to wallet server first, and then generate a thin JWE (with only instance ID information) and send it to the HUAWEI-Wallet-H5 server to bind the pass instance to a user.<br>
 The demo has example methods for generating JWEs and thin JWEs. Please refer to the demo and implement the code in your own system. Please also refer to [Integrate Add to HUAWEI Wallet Button](https://developer.huawei.com/consumer/en/doc/development/HMSCore-Guides-V5/guide-webpage-0000001050042334-V5) (section “Generating a JWE and Sending It to the Huawei Server” and section “Generating a Thin JWE and Sending It to the Huawei Server”) for more details.
 
 ### Signature Validation
