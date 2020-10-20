@@ -1,17 +1,21 @@
 
 # HUAWEI-Wallet-Server Demo Development Tutorial
 ### Table of Contents
- * [Introduction](#introduction)
- * [Supported Environments](#supported-environments)
- * [Apply for Wallet Kit Service](#apply-for-wallet-kit-service)
- * [Set Configuration Values](#set-configuration-values)
- * [Pass Models and Pass Instances](#pass-models-and-pass-instances)
- * [Compile the Demo as a Maven Project](#compile-the-demo-as-a-maven-project)
- * [Example Methods for Pass Models](#example-methods-for-pass-models)
- * [Example Methods for Pass Instances](#example-methods-for-pass-instances)
- * [Generate JWE](#generate-jwe)
- * [Question or issues](#question-or-issues)
- * [License](#license)
+1. [Introduction](#introduction)
+1. [Supported Environments](#supported-environments)
+1. [Apply for Wallet Kit Service](#apply-for-wallet-kit-service)
+1. [Set Configuration Values](#set-configuration-values)
+1. [Pass Models and Pass Instances](#pass-models-and-pass-instances)
+1. [Compile the Demo as a Maven Project](#compile-the-demo-as-a-maven-project)
+1. [Example Methods](#example-methods)
+   1. [Example Methods for Pass Models](#example-methods-for-pass-models)
+   1. [Example Methods for Pass Instances](#example-methods-for-pass-instances)
+   1. [Generate JWE](#generate-jwe)
+   1. [Signature Validation](#signature-validation)
+1. [Question or issues](#question-or-issues)
+1. [License](#license)
+
+
 
 ## Introduction
 HUAWEI-Wallet-Server Demo is sample code showing how to use the HUAWEI-Wallet-Server interfaces. The HUAWEI-Wallet-Server interfaces contain REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, and Event Ticket). You can use these REST APIs to implement operations such as adding, querying or updating passes.<br>
@@ -29,13 +33,13 @@ After you finished applying for a service ID, you can begin to test the correspo
 ## Set Configuration Values
 Before running the Demo project，you need to set the following configuration values in the “src\test\resources\release.config.properties” file: “gw.appid”, “gw.appid.secret”, “gw.tokenUrl”, “walletServerBaseUrl”, “servicePrivateKey”, and “walletWebsiteBaseUrl”
 
-### Set "gw.appid" and "gw.appid.secret":
+#### Set "gw.appid" and "gw.appid.secret":
 To implement the Wallet Kit to an app, "gw.appid" and "gw.appid.secret" are this app's "App ID" and "App secret". Go to the AGC website, login to your account, click “My apps” and then click the app you want to operate. Then you can find its App ID and App secret.
 
-### Set “gw.tokenUrl”
+#### Set “gw.tokenUrl”
 Set gw.tokenUrl = https://oauth-login.cloud.huawei.com/oauth2/v3/token. This is the address to obtain a REST API authentication token.
 
-### Set "walletServerBaseUrl":
+#### Set "walletServerBaseUrl":
 “walletServerBaseUrl” is a common section of the REST APIs’ http requests. Its format is: walletServerBaseUrl = https://{walletkit_server_url}/hmspass. Set {walletkit_server_url} with one of the values in the following table according to your account’s location. 
 | location         	| walletkit_server_url                	|
 |------------------	|-------------------------------------	|
@@ -45,10 +49,10 @@ Set gw.tokenUrl = https://oauth-login.cloud.huawei.com/oauth2/v3/token. This is 
 | Latin America    	| passentrust-dra.wallet.hicloud.com  	|
 | Russia           	| passentrust-drru.wallet.hicloud.com 	|
 
-### Set “servicePrivateKety”
+#### Set “servicePrivateKety”
 You generated a pair of RSA private key and public key while you applying for Wallet Kit service on the AGC website. Set the private key here and you will use it to sign JWEs.
 
-### Set “walletWebsiteBaseUrl”
+#### Set “walletWebsiteBaseUrl”
 “walletWebsiteBaseUrl” is the address of HUAWEI-Wallet-H5 server. Its format is: walletWebsiteBaseUrl=https://{walletkit_website_url}/walletkit/consumer/pass/save. Set {walletkit_website_url} with one of the values in the following table according to your account’s location.
 | location      	  | walletkit_website_url               |
 |-------------------|------------------------------------	|
