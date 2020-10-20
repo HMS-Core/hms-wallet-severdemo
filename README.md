@@ -18,8 +18,8 @@
 
 
 ## Introduction
-HUAWEI-Wallet-Server Demo is sample code showing how to use the HUAWEI-Wallet-Server interfaces. The HUAWEI-Wallet-Server interfaces contain REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, and Event Ticket). You can use these REST APIs to implement operations such as adding, querying or updating passes.<br>
-Before you use this Demo, you should have a HUAWEI developer account, and have already created an app to implement the HUAWEI wallet service. This “app” doesn’t have to be a software that will be actually installed on cell phones. It means an application of using the HUAWEI wallet service. So please create an app on the [HUAWEI AppGallery Connect (AGC) website](https://developer.huawei.com/consumer/en/service/josp/agc/index.html) even if you are not going to develop mobile apps. If you haven't, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/start/10104) and [Create an App](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-create_app). 
+HUAWEI-Wallet-Server Demo is sample code showing how to use the HUAWEI-Wallet-Server interfaces. The HUAWEI-Wallet-Server interfaces contain REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, and Event Ticket). You can use these REST APIs to implement operations such as adding, querying, or updating passes.<br>
+Before you use this Demo, you should have a HUAWEI developer account, and have already created an app to implement the HUAWEI wallet service. This “app” doesn’t have to be a program that will be actually installed on cell phones. It means an application of using the HUAWEI wallet service. So please create an app on the [HUAWEI AppGallery Connect (AGC) website](https://developer.huawei.com/consumer/en/service/josp/agc/index.html) even if you are not going to develop mobile apps. If you haven't, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/start/10104) and [Create an App](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-create_app). 
 
 ## Supported Environments
 Maven and Oracle Java 1.8.0.211 or higher are required to run the Demo project.
@@ -50,7 +50,7 @@ Set gw.tokenUrl = https://oauth-login.cloud.huawei.com/oauth2/v3/token. This is 
 | Russia           	| wallet-passentrust-drru.cloud.huawei.ru 	|
 
 #### Set “servicePrivateKety”
-You generated a pair of RSA private key and public key while you applying for Wallet Kit service on the [AGC website](https://developer.huawei.com/consumer/en/service/josp/agc/index.html). Set the private key here and you will use it to sign JWEs.
+You generated a pair of RSA private key and public key while you [applying for Wallet Kit service](#apply-for-wallet-kit-service). Set the private key here and you will use it to sign JWEs.
 
 #### Set “walletWebsiteBaseUrl”
 “walletWebsiteBaseUrl” is the address of HUAWEI-Wallet-H5 server. Its format is: walletWebsiteBaseUrl=https://{walletkit_website_url}/walletkit/consumer/pass/save. Set {walletkit_website_url} with one of the values in the following table according to your account’s location.
@@ -63,7 +63,7 @@ You generated a pair of RSA private key and public key while you applying for Wa
 | Russia        	  | walletpass-drru.cloud.huawei.com    |
 
 ## Pass Models and Pass Instances
-A pass model is a style of pass instances. Instances belonging to the same model share some common parameters. For example, a boarding pass model contains information about departure time and arrival time, while a boarding pass instance contains a passenger’s name, his seat, his boarding sequence, etc. Each pass instance belongsto a specific model. Hence, you should first create a model before creating instances and performing other operations.<br>
+A pass model is a style of pass instances. Instances belonging to the same model share some common parameters. For example, a boarding pass model contains information about departure time and arrival time, while a boarding pass instance contains a passenger’s name, his seat, his boarding sequence, etc. Each pass instance belongs to a specific model. Hence, you should first create a model before creating instances and performing other operations.<br>
 All pass models and instances have the same data format, which is HwWalletObject. Refer to [HwWalletObject Definition](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/def-0000001050160319-V5) for more details.<br>
 Input parameters of models and instances are passed by JSON files in the Demo project. You can generate your own data by modifying the JSON files in the “src/test/resources/data” folder.<br>
 Remember to set the correct “passTypeIdentifier” in these input JSON files, which should be identical to your “Service ID” on the [AGC website](https://developer.huawei.com/consumer/en/service/josp/agc/index.html).
@@ -112,16 +112,16 @@ The HUAWEI wallet server provides REST APIs to update part of a pass instance by
 This API is only provided for loyalty instances. See [Link/Unlink an Offer](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/link-offer-instance-0000001050158402-V5). You can link/unlink offer instances to/from a loyalty instance by calling the “updateLinkedOffersToLoyaltyInstance” method. You should make sure the offers you want to add already exist before you use this API. Otherwise, the client cannot show an offer that is not in the server’s database. These offer instances can belong to other apps or other developers.
 
 ### Generate JWE
-Developers need to generate JSON Web Encryption(JWE) strings and send them to HUAWI-Wallet-H5 server (See [Set “walletWebsiteBaseUrl”](#set-“walletwebsitebaseurl”)) to bind a pass instance to a Huawei Wallet user.<br>
-There are two ways to generate JWEs. The first way: you can generate a JWE string with complete information of a pass instance and send it to the HUAWEI-Wallet-H5 server. By this way, you don’t need to call [add-pass-instance methods](#add-a-pass-instance). The second way: you can [add a pass instance](#add-a-pass-instance) to wallet server first, and then generate a thin JWE (with only instance ID information) and send it to the HUAWEI-Wallet-H5 server to bind the pass instance to a user.<br>
+Developers need to generate JSON Web Encryption(JWE) strings and send them to the [HUAWEI-Wallet-H5 server](#set-“walletwebsitebaseurl”)) to bind a pass to a HUAWEI Wallet user.<br>
+There are two ways to generate JWEs. The first way: you can generate a JWE string with complete information of a pass instance and send it to the HUAWEI-Wallet-H5 server. In this way, you don’t need to call [add-pass-instance methods](#add-a-pass-instance). The second way: you can [add a pass instance](#add-a-pass-instance) to the wallet server first, and then generate a thin JWE (with only instance ID information) and send it to the HUAWEI-Wallet-H5 server to bind the pass instance to a user.<br>
 The demo has example methods for generating JWEs and thin JWEs. Please refer to the demo and implement the code in your own system. Please also refer to [Integrate Add to HUAWEI Wallet Button](https://developer.huawei.com/consumer/en/doc/development/HMSCore-Guides-V5/guide-webpage-0000001050042334-V5) (section “Generating a JWE and Sending It to the Huawei Server” and section “Generating a Thin JWE and Sending It to the Huawei Server”) for more details.
 
 ### Signature Validation
-If you provides a Callback URL or a NFC Callback URL during [applying for Wallet Kit service](#apply-for-wallet-kit-service), you will receive callback notification requests from HUAWEI wallet server. You should verify the signature in the request header with Huawei's fixed signature public key. The test case "verifySignature" gives a example of verifying a signature. Refer to [Callback APIs](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/public-0000001050158472-V5) for more details.
+If you provide a Callback URL or an NFC Callback URL during [applying for Wallet Kit service](#apply-for-wallet-kit-service), you will receive callback notification requests from the HUAWEI wallet server. You should verify the signature in the request header with HUAWEI's fixed signature public key. The test case "verifySignature" gives an example of verifying a signature. Refer to [Callback APIs](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/public-0000001050158472-V5) for more details.
 
 ## Question or issues
 If you want to evaluate more about HMS Core,
-[r/HMSCore on Reddit](https://www.reddit.com/r/HuaweiDevelopers/) is for you to keep up with latest news about HMS Core, and to exchange insights with other developers.
+[r/HMSCore on Reddit](https://www.reddit.com/r/HuaweiDevelopers/) is for you to keep up with the latest news about HMS Core, and to exchange insights with other developers.
 
 If you have questions about how to use HMS samples, try the following options:
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/huawei-mobile-services) is the best place for any programming questions. Be sure to tag your question with 
