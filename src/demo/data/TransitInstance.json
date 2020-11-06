@@ -1,0 +1,39 @@
+{
+  "organizationPassId": "5623489611",
+  "passTypeIdentifier": "Replace with the Service ID you applied on AGC",
+  "passStyleIdentifier": "TransitTestModel",
+  "serialNumber": "TransitPass60001",
+  "fields": {
+    "status": {
+      "state": "active",
+      "effectTime": "2020-04-06T00:00:00.111Z",
+      "expireTime": "2030-04-06T00:00:00.111Z"
+    },
+    "commonFields": [
+      {
+        "key": "ticketStatus",
+        "value": "Not Used"
+      }
+    ],
+    "barCode": {
+      "text": "562348969211212",
+      "type": "codabar",
+      "value": "562348969211212",
+      "encoding": "UTF-8"
+    },
+    "ticketInfoList": [
+      {
+        "key": "carriage",
+        "value": "8"
+      },
+      {
+        "key": "seatNumber",
+        "value": "7A"
+      },
+      {
+        "key": "seatCoach",
+        "value": "14"
+      }
+    ]
+  }
+}
