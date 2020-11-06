@@ -1,0 +1,51 @@
+{
+  "organizationPassId": "5623489234",
+  "passTypeIdentifier": "Replace with the Service ID you applied on AGC",
+  "passStyleIdentifier": "EventTicketTestModel",
+  "serialNumber": "EventTicketPass10001",
+  "fields": {
+    "status": {
+      "state": "active",
+      "effectTime": "2020-04-06T00:00:00.111Z",
+      "expireTime": "2030-04-06T00:00:00.111Z"
+    },
+    "commonFields": [
+      {
+        "key": "ticketNumber",
+        "value": "12345678"
+      }
+    ],
+    "appendFields": [
+      {
+        "key": "gate",
+        "value": "1",
+        "label": "Gate"
+      },
+      {
+        "key": "section",
+        "value": "2",
+        "label": "Section"
+      },
+      {
+        "key": "row",
+        "value": "10",
+        "label": "Row"
+      },
+      {
+        "key": "seat",
+        "value": "20",
+        "label": "Seat"
+      },
+      {
+        "key": "userName",
+        "value": "Joe Wiley"
+      }
+    ],
+    "barCode": {
+      "text": "562348969211212",
+      "type": "codabar",
+      "value": "562348969211212",
+      "encoding": "UTF-8"
+    }
+  }
+}

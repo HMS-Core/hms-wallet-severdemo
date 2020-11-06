@@ -1,0 +1,37 @@
+{
+  "organizationPassId": "5623489692",
+  "passTypeIdentifier": "Replace with the Service ID you applied on AGC",
+  "passStyleIdentifier": "FlightTestModel",
+  "serialNumber": "FlightPass20001",
+  "fields": {
+    "status": {
+      "state": "active",
+      "effectTime": "2020-04-06T00:00:00.111Z",
+      "expireTime": "2030-04-06T00:00:00.111Z"
+    },
+    "commonFields": [
+      {
+        "key": "seatNumber",
+        "value": "15B"
+      },
+      {
+        "key": "passengerName",
+        "value": "Joe Wiley"
+      },
+      {
+        "key": "boardingSequence",
+        "value": "2"
+      },
+      {
+        "key": "flightClass",
+        "value": "Business Class"
+      }
+    ],
+    "barCode": {
+      "text": "5623489692",
+      "type": "qrCode",
+      "value": "5623489692",
+      "encoding": "UTF-8"
+    }
+  }
+}
