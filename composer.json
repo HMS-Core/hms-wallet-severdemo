@@ -1,0 +1,10 @@
+{
+  "require": {
+    "phpseclib/phpseclib": "1.0.*",
+    "phpunit/phpunit": "8.0.0",
+    "ext-json": "*",
+    "ext-zlib": "*",
+    "ext-openssl": "*",
+    "ext-curl": "*"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "addOffers": [
+    {
+      "passTypeIdentifier": "Replace with the passTypeIdentifier of the instance you want to add",
+      "instanceId": "Replace with the serialNumber of the instance you want to add"
+    }
+  ],
+  "deleteOffers": [
+    {
+      "passTypeIdentifier": "Replace with the passTypeIdentifier of the instance you want to delete",
+      "instanceId": "Replace with the serialNumber of the instance you want to delete"
+    }
+  ]
+}
