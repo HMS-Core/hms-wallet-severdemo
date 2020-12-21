@@ -17,7 +17,8 @@
 
 
 ## Introduction
-HUAWEI Wallet Kit Server Demo is sample code showing how to use the HUAWEI-Wallet-Server interfaces. The HUAWEI-Wallet-Server interfaces contain REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, and Event Ticket). You can use these REST APIs to implement operations such as adding, querying, or updating passes.<br>
+HUAWEI Wallet Kit Server Demo is sample code showing how to use the HUAWEI-Wallet-Server interfaces. The HUAWEI-Wallet-Server interfaces contain REST APIs for six types of passes (Loyalty Card, Offer, Gift Card, Boarding Pass, Transit Pass, and Event Ticket). You can use these REST APIs to implement operations such as adding, querying, or updating passes.
+
 Before you use this Demo, you should have a HUAWEI developer account, and have already created an app to implement the HUAWEI wallet service. This "app" doesn’t have to be a program that will be actually installed on cell phones. It means an application of using the HUAWEI wallet service. So please create an app on the [HUAWEI AppGallery Connect (AGC) website](https://developer.huawei.com/consumer/en/service/josp/agc/index.html) even if you are not going to develop mobile apps. If you haven't, please refer to [Register a HUAWEI ID](https://developer.huawei.com/consumer/en/doc/start/10104) and [Create an App](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-create_app). 
 
 ## Supported Environments
@@ -25,8 +26,11 @@ Maven and Oracle Java 1.8.0.211 or higher are required to run the Demo project.
 
 ## Apply for Wallet Kit Service
 Follow [Enabling Services](https://developer.huawei.com/consumer/en/doc/distribution/app/agc-enable_service) to apply for wallet service.<br>
+
 Please notice that you will set a "Service ID" in your application. The "Service ID" here is "passTypeIdentifier" you will use in the Demo code. You will set the "passTypeIdentifier" later.<br>
+
 You will generate a pair of RSA keys during this process. Store them properly, and you will use the private key to sign JWEs (see [Generate JWE](#generate-jwe)). The wallet server will use the public key you upload to verify signatures.<br>
+
 After you finished applying for a service ID, you can begin to test the corresponding pass. Apply for other service IDs if you want to test other passes.
 
 ## Set Configuration Values
@@ -63,8 +67,11 @@ You generated a pair of RSA private key and public key while you [applying for W
 
 ## Pass Models and Pass Instances
 A pass model is a style of pass instances. Instances belonging to the same model share some common parameters. For example, a boarding pass model contains information about departure time and arrival time, while a boarding pass instance contains a passenger’s name, his seat, his boarding sequence, etc. Each pass instance belongs to a specific model. Hence, you should first create a model before creating instances and performing other operations.<br>
+
 All pass models and instances have the same data format, which is HwWalletObject. Refer to [HwWalletObject Definition](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/def-0000001050160319-V5) for more details.<br>
+
 Input parameters of models and instances are passed by JSON files in the Demo project. You can generate your own data by modifying the JSON files in the "src\test\resources\data" folder.<br>
+
 Remember to set the correct "passTypeIdentifier" in these input JSON files, which should be identical to your "Service ID" on the [AGC website](https://developer.huawei.com/consumer/en/service/josp/agc/index.html).
 
 ## Compile the Demo as a Maven Project
@@ -72,42 +79,42 @@ After you set all the configurations values, compile the Demo as a Maven project
 
 ## Example Methods
 ### Example Methods for Pass Models
-#### Register a Pass Model
+#### 1. Register a Pass Model
 The HUAWEI wallet server provides REST APIs to create pass models. See [Creating a Model](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/create-model-0000001050158390-V5). You can add a loyalty model to the server’s database by calling the "createLoyaltyModel" method, and create other types of models likewise. You should create a pass model first before calling any other methods.
 
-#### Query a Pass Model
+#### 2. Query a Pass Model
 The HUAWEI wallet server provides REST APIs to query a pass model by its model ID. See [Query a Model](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/query-model-0000001050160345-V5). You can query a loyalty model by calling the "getLoyaltyModel" method, and query other types of models likewise.
 
-#### Query a List of Pass Models
+#### 3. Query a List of Pass Models
 If your app created multiple models of a pass type (e.g. a gold loyalty card model and a diamond loyalty card model), you can use these APIs to query a list of these models. See [Query Models](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/list-model-0000001050158392-V5). You can query a list of loyalty models by calling the "getLoyaltyModelList" method, and query other types of models likewise.
 
-#### Overwrite a Pass Model
+#### 4. Overwrite a Pass Model
 The HUAWEI wallet server provides REST APIs to overwrite an entire pass model by its model ID. See [Overwrite a Model](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/overwrite-model-0000001050160347-V5). You can overwrite a loyalty model by calling the "fullUpdateLoyaltyModel" method, and overwrite other types of models likewise.
 
-#### Update a Pass Model
+#### 5. Update a Pass Model
 The HUAWEI wallet server provides REST APIs to update part of a pass model by its model ID. See [Update a Model](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/update-model-0000001050158394-V5). You can overwrite a loyalty model by calling the "partialUpdateLoyaltyModel" method, and update other types of models likewise.
 
-#### Add Messages to a Pass Model
+#### 6. Add Messages to a Pass Model
 "messageList" is one of the attributes in a pass model, which is a list of messages. You can add messages to a loyalty model by calling the "addMessageToLoyaltyModel" method, and add to other types of models likewise. The "messageList" in a pass model has at most 10 messages. You cannot add more than 10 messages at a time. If the list’s size is already 10 and you keep adding messages, the oldest messages will be removed. See [Add Messages to a Model](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/model-add-message-0000001050160349-V5).
 
 
 ### Example Methods for Pass Instances
-#### Add a Pass Instance
+#### 1. Add a Pass Instance
 The HUAWEI wallet server provides REST APIs to add pass instances. See [Add an Instance](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/add-instance-0000001050158396-V5). You can add a loyalty instance to the server’s database by calling the "createLoyaltyInstance" method, and create other types of instances likewise. You should create a pass model first before creating instances belonging to it.
 
-#### Query a Pass Instance
+#### 2. Query a Pass Instance
 The HUAWEI wallet server provides REST APIs to query a pass instance by its instance ID. See [Query an Instance](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/query-instance-0000001050160351-V5). You can query a loyalty instance by calling the "getLoyaltyInstance" method, and query other types of instances likewise.
 
-#### Overwrite a Pass Instance
+#### 3. Overwrite a Pass Instance
 The HUAWEI wallet server provides REST APIs to overwrite an entire pass instance by its instance ID. See [Overwrite an Instance](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/overwrite-instance-0000001050160353-V5). You can overwrite a loyalty instance by calling the "fullUpdateLoyaltyInstance" method, and overwrite other types of instances likewise.
 
-#### Update a Pass Instance
+#### 4. Update a Pass Instance
 The HUAWEI wallet server provides REST APIs to update part of a pass instance by its instance ID. See [Update an Instance](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/update-instance-0000001050158400-V5). You can overwrite a loyalty instance by calling the "partialUpdateLoyaltyInstance" method, and update other types of instances likewise.
 
-#### Add Messages to a Pass Instance
+#### 5. Add Messages to a Pass Instance
 "messageList" can also be an attribute of a pass instance. You can add messages to a loyalty instance by calling the "addMessageToLoyaltyInstance" method, and add to other types of instances likewise. The "messageList" in a pass instance has at most 10 messages. You cannot add more than 10 messages at a time. If the list’s size is already10 and you keep adding messages, the oldest messages will be removed. See [Add Messages to an Instance](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/instance-add-message-0000001050160355-V5).
 
-#### Link/unlink Offer Instances to/from a Loyalty Instance
+#### 6. Link/unlink Offer Instances to/from a Loyalty Instance
 This API is only provided for loyalty instances. See [Link/Unlink an Offer](https://developer.huawei.com/consumer/en/doc/development/HMSCore-References-V5/link-offer-instance-0000001050158402-V5). You can link/unlink offer instances to/from a loyalty instance by calling the "updateLinkedOffersToLoyaltyInstance" method. You should make sure the offers you want to add already exist before you use this API. Otherwise, the client cannot show an offer that is not in the server’s database. These offer instances can belong to other apps or other developers.
 
 ### Generate JWE
