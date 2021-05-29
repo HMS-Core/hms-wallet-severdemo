@@ -35,6 +35,14 @@ public interface ServerApiService {
     JSONObject postToWalletServer(String urlSegment, String body);
 
     /**
+     * query Huawei Wallet supported features from wallet server.
+     *
+     * @param urlSegment request URL segment.
+     * @return the supported flag.
+     */
+    JSONObject queryIssuerAndFlag(String urlSegment);
+
+    /**
      * Return the model/instance for a given model/instance ID.
      *
      * @param urlSegment request URL segment.

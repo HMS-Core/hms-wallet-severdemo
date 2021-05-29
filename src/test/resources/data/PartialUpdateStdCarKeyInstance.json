@@ -1,0 +1,10 @@
+{
+  "fields": {
+    "commonFields": [
+      {
+        "value": "xxx.NewService",
+        "key": "bleTargetService"
+      }
+    ]
+  }
+}

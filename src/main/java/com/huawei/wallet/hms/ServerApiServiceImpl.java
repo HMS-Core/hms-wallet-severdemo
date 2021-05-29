@@ -70,6 +70,22 @@ public class ServerApiServiceImpl implements ServerApiService {
     }
 
     @Override
+    public JSONObject queryIssuerAndFlag(String urlSegment) {
+        // Construct the http header.
+        HttpHeaders header = constructHttpHeaders();
+        // Construct the http URL.
+        String baseUrl = ConfigUtil.instants().getValue("walletServerBaseUrl");
+        String walletServerUrl = baseUrl + urlSegment;
+
+        // Send the http request and get response.
+        HttpEntity<JSONObject> entity = new HttpEntity<>(header);
+        ResponseEntity<JSONObject> response =
+                REST_TEMPLATE.exchange(walletServerUrl, HttpMethod.GET, entity, JSONObject.class);
+        // Return the issuer and flag by wallet server.
+        return response.getBody();
+    }
+
+    @Override
     public JSONObject getHwWalletObjectById(String urlSegment, String id) {
         // Construct the http header.
         HttpHeaders header = constructHttpHeaders();

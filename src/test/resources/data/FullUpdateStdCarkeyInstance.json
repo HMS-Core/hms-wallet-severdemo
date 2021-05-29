@@ -1,0 +1,64 @@
+{
+  "organizationName": "Replace with your organization name",
+  "passTypeIdentifier": "Replace with the Service ID you applied on AGC",
+  "passStyleIdentifier": "StdCarKeyTestModel",
+  "organizationPassId": "StdCarKeyPass40001",
+  "serialNumber": "StdCarKeyPass40001",
+  "fields": {
+    "timeList": [
+      {
+        "value": "timeListValue",
+        "key": "linkDevicePassExpireTime"
+      }
+    ],
+    "status": {
+      "state": "active",
+      "effectTime": "2020-04-06T00:00:00.111Z",
+      "expireTime": "2040-04-06T00:00:00.111Z"
+    },
+    "commonFields": [
+      {
+        "value": "xxx.CarKeyActivity",
+        "key": "bleTargetActivity"
+      },
+      {
+        "value": "hwpass.carkey.ble",
+        "key": "bleFeature"
+      },
+      {
+        "value": "xx:xx:xx:xx:xx:xx",
+        "key": "bleMacAddress"
+      },
+      {
+        "label": "readerId",
+        "value": "xxx",
+        "key": "readerMatchValue"
+      },
+      {
+        "label": "主卡服务号",
+        "value": "xxx",
+        "key": "ownerPassTypeIdentifier"
+      },
+      {
+        "value": "0000xxxx-0000-1000-8000-00805f9b34fb",
+        "key": "bleServiceUuid"
+      },
+      {
+        "value": "xxx",
+        "key": "bleTargetPackage"
+      },
+      {
+        "value": "xxx",
+        "key": "bleTargetService"
+      }
+    ]
+  },
+  "linkDevicePass": {
+    "webServiceURL": "https://xxx",
+    "nfcType": "1",
+    "serialNumber": "xxx",
+    "passVersion": "10.0",
+    "spPublickey": "xxx",
+    "token": "123456"
+  }
+}

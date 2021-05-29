@@ -1,0 +1,10 @@
+{
+  "fields": {
+    "commonFields": [
+      {
+        "key": "logo",
+        "value": "https://xxx/new_log.png"
+      }
+    ]
+  }
+}

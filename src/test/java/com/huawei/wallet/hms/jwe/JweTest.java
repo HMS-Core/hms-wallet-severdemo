@@ -21,6 +21,7 @@ import com.huawei.wallet.util.ConfigUtil;
 import com.huawei.wallet.util.JweUtil;
 import org.junit.Test;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
@@ -80,7 +81,14 @@ public class JweTest {
         String jwe = JweUtil.generateJwe(jweSignPrivateKey, payload);
         System.out.println("JWE String: " + jwe + "\n");
 
-        System.out.println("JWE link for browser: " + ConfigUtil.instants().getValue("walletWebsiteBaseUrl")
-            + "?content=" + URLEncoder.encode(jwe));
+        try {
+            // 1.If you access with website, such as Chrome Web browser, IE, Microsoft Edge; please encode jwe by URLEncoder.encode(jwe, "UTF-8");
+            // 2.If you access with android mobile phone and interact with Huawei Wallet Server directly; please do not encode it;
+            // 3.If you access with android mobile phone and pass jwe to Huawei Pay Application by android schema; please encode jwe by URLEncoder.encode(jwe, "UTF-8");
+            System.out.println("JWE link for browser: " + ConfigUtil.instants().getValue("walletWebsiteBaseUrl")
+                + "?content=" + URLEncoder.encode(jwe, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Encode JWE String error.");
+        }
     }
 }

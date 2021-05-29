@@ -1,0 +1,39 @@
+{
+  "passVersion": "10.0",
+  "passTypeIdentifier": "Replace with the Service ID you applied on AGC",
+  "passStyleIdentifier": "StdCarKeyTestModel",
+  "organizationName": "Replace with your organization name",
+  "fields": {
+    "appendFields": [
+      {
+        "label": "NFCCardFlag",
+        "value": "true",
+        "key": "isCreateWhiteCard"
+      }
+    ],
+    "commonFields": [
+      {
+        "label": "卡面主标题",
+        "value": "我的车",
+        "key": "merchantName"
+      },
+      {
+        "label": "卡面副标题",
+        "value": "XXX车钥匙",
+        "key": "name"
+      },
+      {
+        "value": "https://xxx/xxx.png",
+        "key": "logo"
+      },
+      {
+        "value": "https://xxx/xxx.webp",
+        "key": "backgroundImage"
+      },
+      {
+        "value": "https://xxx/xxx.png",
+        "key": "picUrl"
+      }
+    ]
+  }
+}
