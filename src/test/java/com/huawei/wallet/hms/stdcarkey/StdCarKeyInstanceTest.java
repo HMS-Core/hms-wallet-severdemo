@@ -91,7 +91,7 @@ public class StdCarKeyInstanceTest {
         System.out.println("getStdCarKeyyInstanceList begin.");
 
         // Model ID of std car key instances you want to get.
-        String modelId = "StdCarKeyTestModel";
+        String modelId = "xxxxx";
 
         // Get a list of std car key instances.
         String urlSegment = "/v2/key_stdcar/instance";

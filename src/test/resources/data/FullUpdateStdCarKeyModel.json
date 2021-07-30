@@ -1,8 +1,8 @@
 {
   "passVersion": "10.0",
-  "passTypeIdentifier": "Replace with the Service ID you applied on AGC",
-  "passStyleIdentifier": "StdCarKeyTestModel",
-  "organizationName": "Replace with your organization name",
+  "passTypeIdentifier": "hwpass.stdcarkey.bluecarkey.xxx",
+  "passStyleIdentifier": "xxxxxxx",
+  "organizationName": "xxx车钥匙",
   "fields": {
     "appendFields": [
       {

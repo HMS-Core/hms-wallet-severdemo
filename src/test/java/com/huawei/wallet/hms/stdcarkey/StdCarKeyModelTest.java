@@ -120,7 +120,7 @@ public class StdCarKeyModelTest {
         System.out.println("partialUpdateStdCarKeyModel begin.");
 
         // ID of the std car key model you want to update.
-        String modelId = "StdCarKeyTestModel";
+        String modelId = "xxxxxxx";
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will merge with the corresponding model.
         String modelStr = ConfigUtil.readFile("PartialUpdateStdCarKeyModel.json");
