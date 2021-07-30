@@ -2,8 +2,16 @@
   "fields": {
     "commonFields": [
       {
-        "key": "logo",
-        "value": "https://xxx/new_log.png"
+        "value": "xxx",
+        "key": "logo"
+      },
+      {
+        "value": "xxx",
+        "key": "backgroundImage"
+      },
+      {
+        "value": "xxx",
+        "key": "picUrl"
       }
     ]
   }

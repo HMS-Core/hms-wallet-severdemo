@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huawei.wallet.hms.ServerApiService;
 import com.huawei.wallet.hms.ServerApiServiceImpl;
+import com.huawei.wallet.hms.jwe.JweTest;
 import com.huawei.wallet.util.ConfigUtil;
 import com.huawei.wallet.util.HwWalletObjectUtil;
 import org.junit.Test;
@@ -54,6 +55,12 @@ public class StdCarKeyInstanceTest {
         JSONObject responseInstance =
             serverApiService.postToWalletServer(urlSegment, JSONObject.toJSONString(instance));
         System.out.println("Posted std car key instance: " + JSONObject.toJSONString(responseInstance));
+
+        if (responseInstance.containsKey("serialNumber")) {
+            String serialNumber = responseInstance.getString("serialNumber");
+            JweTest test = new JweTest();
+            test.generateThinJWEToBindUser(serialNumber);
+        }
     }
 
     /**
@@ -66,7 +73,7 @@ public class StdCarKeyInstanceTest {
         System.out.println("getStdCarKeyInstance begin.");
 
         // ID of the std car key instance you want to get.
-        String instanceId = "StdCarKeyPass40001";
+        String instanceId = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
         // Get the std car key instance.
         String urlSegment = "/v2/key_stdcar/instance/";
@@ -126,7 +133,7 @@ public class StdCarKeyInstanceTest {
         System.out.println("partialUpdateStdCarKeyInstance begin.");
 
         // ID of the std car key instance you want to update.
-        String instanceId = "StdCarKeyPass40001";
+        String instanceId = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
         // Read a HwWalletObject from a JSON file. This HwWalletObject will merge with the corresponding instance.
         String instanceStr = ConfigUtil.readFile("PartialUpdateStdCarKeyInstance.json");

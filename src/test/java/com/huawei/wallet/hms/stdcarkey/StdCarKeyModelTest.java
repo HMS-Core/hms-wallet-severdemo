@@ -63,7 +63,7 @@ public class StdCarKeyModelTest {
         System.out.println("getStdCarKeyModel begin.");
 
         // ID of the std car key model you want to get.
-        String modelId = "StdCarKeyTestModel";
+        String modelId = "xxxxxxx";
 
         // Get the std car key model.
         String urlSegment = "/v2/key_stdcar/model/";

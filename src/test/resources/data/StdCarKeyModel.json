@@ -1,8 +1,8 @@
 {
   "passVersion": "10.0",
-  "passTypeIdentifier": "Replace with the Service ID you applied on AGC",
-  "passStyleIdentifier": "StdCarKeyTestModel",
-  "organizationName": "Replace with your organization name",
+  "passTypeIdentifier": "hwpass.stdcarkey.bluecarkey.xxx",
+  "passStyleIdentifier": "xxxxxxx",
+  "organizationName": "xxx车钥匙",
   "fields": {
     "appendFields": [
       {
@@ -14,24 +14,24 @@
     "commonFields": [
       {
         "label": "卡面主标题",
-        "value": "我的车",
+        "value": "我的爱车",
         "key": "merchantName"
       },
       {
         "label": "卡面副标题",
-        "value": "XXX车钥匙",
+        "value": "xxx车钥匙",
         "key": "name"
       },
       {
-        "value": "https://xxx/xxx.png",
+        "value": "xxxx",
         "key": "logo"
       },
       {
-        "value": "https://xxx/xxx.webp",
+        "value": "xxxx",
         "key": "backgroundImage"
       },
       {
-        "value": "https://xxx/xxx.png",
+        "value": "xxxx",
         "key": "picUrl"
       }
     ]

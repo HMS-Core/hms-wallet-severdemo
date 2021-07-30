@@ -1,9 +1,9 @@
 {
-  "organizationName": "Replace with your organization name",
-  "passTypeIdentifier": "Replace with the Service ID you applied on AGC",
-  "passStyleIdentifier": "StdCarKeyTestModel",
-  "organizationPassId": "StdCarKeyPass40001",
-  "serialNumber": "StdCarKeyPass40001",
+  "organizationName": "xxx车钥匙",
+  "passTypeIdentifier": "hwpass.stdcarkey.bluecarkey.xxx",
+  "passStyleIdentifier": "xxxxxxx",
+  "organizationPassId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "serialNumber": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   "fields": {
     "timeList": [
       {
@@ -13,12 +13,12 @@
     ],
     "status": {
       "state": "active",
-      "effectTime": "2020-04-06T00:00:00.111Z",
-      "expireTime": "2040-04-06T00:00:00.111Z"
+      "effectTime": "2020-04-06T00:00:00Z",
+      "expireTime": "2040-04-06T00:00:00Z"
     },
     "commonFields": [
       {
-        "value": "xxx.CarKeyActivity",
+        "value": "xxx.CarActivity",
         "key": "bleTargetActivity"
       },
       {
@@ -26,17 +26,17 @@
         "key": "bleFeature"
       },
       {
-        "value": "xx:xx:xx:xx:xx:xx",
+        "value": "01:23:45:67:89:AB",
         "key": "bleMacAddress"
       },
       {
         "label": "readerId",
-        "value": "xxx",
+        "value": "xxxxxxxxxxxxxxxxxxxxx",
         "key": "readerMatchValue"
       },
       {
         "label": "主卡服务号",
-        "value": "xxx",
+        "value": "hwpass.stdcarkey.std",
         "key": "ownerPassTypeIdentifier"
       },
       {
@@ -54,11 +54,11 @@
     ]
   },
   "linkDevicePass": {
-    "webServiceURL": "https://xxx",
+    "webServiceURL": "https://xxxxx",
     "nfcType": "1",
-    "serialNumber": "xxx",
+    "serialNumber": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "passVersion": "10.0",
-    "spPublickey": "xxx",
-    "token": "123456"
+    "spPublickey": "xxxxxxx",
+    "token": "xxxxxx"
   }
 }

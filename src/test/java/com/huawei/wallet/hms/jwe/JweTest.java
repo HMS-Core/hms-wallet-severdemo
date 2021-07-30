@@ -65,11 +65,16 @@ public class JweTest {
     public void generateThinJWEToBindUser() {
         System.out.println("generateThinJWEToBindUser begin.\n");
 
+        generateThinJWEToBindUser("Replace with the instance ID to be bond. For example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+    }
+
+    public void generateThinJWEToBindUser(String instanceId) {
+        System.out.println("generateThinJWEToBindUser with instanceId begin.\n");
+
         // This is the app ID registered on Huawei AGC website.
         String appId = ConfigUtil.instants().getValue("gw.appid");
         // Bind existing pass instances to a user. Construct a list of instance IDs to be bound.
-        String instanceIdListStr =
-            "{\"instanceIds\": [\"Replace with the instance ID to be bond. For example: EventTicketPass10001\"]}";
+        String instanceIdListStr = "{\"instanceIds\": [\""+ instanceId + "\"]}";
         JSONObject instanceIdList = JSONObject.parseObject(instanceIdListStr);
         instanceIdList.put("iss", appId);
         String payload = instanceIdList.toJSONString();
@@ -80,13 +85,14 @@ public class JweTest {
         // Generate a thin JWE.
         String jwe = JweUtil.generateJwe(jweSignPrivateKey, payload);
         System.out.println("JWE String: " + jwe + "\n");
-
         try {
             // 1.If you access with website, such as Chrome Web browser, IE, Microsoft Edge; please encode jwe by URLEncoder.encode(jwe, "UTF-8");
             // 2.If you access with android mobile phone and interact with Huawei Wallet Server directly; please do not encode it;
             // 3.If you access with android mobile phone and pass jwe to Huawei Pay Application by android schema; please encode jwe by URLEncoder.encode(jwe, "UTF-8");
+            String jweEncoded = URLEncoder.encode(jwe, "UTF-8");
+            System.out.println("JWE String after encode: " + jweEncoded + "\n");
             System.out.println("JWE link for browser: " + ConfigUtil.instants().getValue("walletWebsiteBaseUrl")
-                + "?content=" + URLEncoder.encode(jwe, "UTF-8"));
+                    + "?content=" + jweEncoded);
         } catch (UnsupportedEncodingException e) {
             System.out.println("Encode JWE String error.");
         }
