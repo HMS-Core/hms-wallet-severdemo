@@ -79,9 +79,14 @@ public class SignatureTest {
         Iterator<String> iterator = sortedKeys.iterator();
         while (iterator.hasNext()) {
             String key = iterator.next();
-            Object value = jsonObject.get(key);
-            if (!Objects.isNull(value)) {
-                buffer.append(key).append("=").append(value);
+            Object obj = jsonObject.get(key);
+            if (!Objects.isNull(obj)) {
+                buffer.append(key).append("=");
+                if ((obj instanceof String) || (obj instanceof Integer)) {
+                    buffer.append(obj);
+                } else if (obj instanceof JSONObject) {
+                    buffer.append(toSignString((JSONObject) obj));
+                }
                 if (iterator.hasNext()) {
                     buffer.append("&");
                 }
